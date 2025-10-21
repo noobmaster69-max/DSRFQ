@@ -1,0 +1,45 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Tsh\\DSRFQ\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{54F3D6E5-503C-43FA-A841-45CC71FB4334}|DSRFQ.Web\\DSRFQ.Web.csproj|d:\\tsh\\dsrfq\\dsrfq.web\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{54F3D6E5-503C-43FA-A841-45CC71FB4334}|DSRFQ.Web\\DSRFQ.Web.csproj|solutionrelative:dsrfq.web\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1:0:{e8b06f52-6d01-11d2-aa7d-00c04f990343}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\Tsh\\DSRFQ\\DSRFQ.Web\\appsettings.json",
+              "RelativeDocumentMoniker": "DSRFQ.Web\\appsettings.json",
+              "ToolTip": "D:\\Tsh\\DSRFQ\\DSRFQ.Web\\appsettings.json",
+              "RelativeToolTip": "DSRFQ.Web\\appsettings.json",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABMAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-08-13T03:23:57.881Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

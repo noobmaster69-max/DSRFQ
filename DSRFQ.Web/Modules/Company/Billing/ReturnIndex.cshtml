@@ -1,0 +1,23 @@
+@inject ITextLocalizer Localizer
+@{
+    ViewData["Title"] = "Return";
+    ViewData["PageId"] = "Return";
+    
+    string nwLinkFormat = "javascript:;";
+}
+
+
+@section Head {
+@Html.StyleBundle("Pages/Return")
+}
+<div id="return">
+</div>
+
+@Html.ModulePageInit(ESM.ReturnPage, new
+{
+    model = Model,
+    nwLinkFormat
+})
+<script src="https://js.stripe.com/basil/stripe.js"></script>
+@* <script type="module" src="/Scripts/Stripe/CheckoutPage.js"></script> *@
+

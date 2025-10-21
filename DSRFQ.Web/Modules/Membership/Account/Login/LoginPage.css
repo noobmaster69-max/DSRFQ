@@ -1,0 +1,18 @@
+
+.s-horizontal-divider {
+  margin: 1em 0;
+  line-height: 0;
+  text-align: center;
+}
+
+.s-horizontal-divider span {
+  background-color: var(--s-card-bg);
+  padding: 1em;
+}
+
+.s-horizontal-divider:before {
+  content: " ";
+  display: block;
+  border-top: 1px solid #e3e3e3;
+  border-bottom: 1px solid #f7f7f7;
+}

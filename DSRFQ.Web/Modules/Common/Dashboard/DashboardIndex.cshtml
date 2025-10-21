@@ -1,0 +1,28 @@
+@model DSRFQ.Common.DashboardPageModel
+@inject ITextLocalizer Localizer
+@{
+    ViewData["Title"] = "Dashboard";
+    ViewData["PageId"] = "Dashboard";
+#if (Northwind)
+    string nwLinkFormat = "~/Northwind/{0}";
+#else  
+    string nwLinkFormat = "javascript:;";
+#endif
+}
+
+@section Head {
+@Html.StyleBundle("Pages/Dashboard")
+}
+
+@section ContentHeader {
+<h1>@Localizer.Get("Navigation.Dashboard")</h1>
+}
+
+<div id="DashboardContent">
+</div>
+
+@Html.ModulePageInit(ESM.DashboardPage, new
+{
+    model = Model,
+    nwLinkFormat
+})

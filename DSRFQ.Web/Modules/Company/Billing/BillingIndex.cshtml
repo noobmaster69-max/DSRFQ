@@ -1,0 +1,25 @@
+@inject ITextLocalizer Localizer
+@{
+    ViewData["Title"] = "Billing";
+    ViewData["PageId"] = "Billing";
+    
+    string nwLinkFormat = "javascript:;";
+}
+
+
+@section Head {
+@Html.StyleBundle("Pages/Dashboard")
+}
+
+
+<div id="BillingPage">
+</div>
+
+
+
+
+@Html.ModulePageInit(ESM.BillingPage, new
+{
+    model = Model,
+    nwLinkFormat
+})

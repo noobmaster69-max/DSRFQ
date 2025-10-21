@@ -1,0 +1,11 @@
+{
+  "Extends": "defaults@6.6.0",
+  "EnableGenerateFields": false,
+  "EnableRowTemplates": false,
+
+  "RootNamespace": "DSRFQ",
+  "UpgradeInfo": {
+    "InitialType": "Premium",
+    "InitialVersion": "8.8.6.0"
+  }
+}

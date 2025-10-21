@@ -1,0 +1,25 @@
+@inject ITextLocalizer Localizer
+@{
+    ViewData["Title"] = "Organization";
+    ViewData["PageId"] = "Organization";
+    
+    string nwLinkFormat = "javascript:;";
+}
+
+
+@section Head {
+@Html.StyleBundle("Pages/Dashboard")
+}
+
+
+<div id="OrganizationDetail">
+</div>
+
+
+
+
+@Html.ModulePageInit(ESM.OrganizationDetailPage, new
+{
+    
+    nwLinkFormat
+})

@@ -1,0 +1,15 @@
+@model DSRFQ.Membership.LoginPageModel
+@inject ITextLocalizer Localizer
+@{
+    ViewData["Title"] = LoginFormTexts.LoginToYourAccount.ToString(Localizer);
+    ViewData["PageId"] = "Login";
+    Layout = MVC.Views.Shared._LayoutNoNavigation;
+}
+<partial name="@MVC.Views.Membership.Account.Login._ActivationComplete" />
+
+<div class="s-full-page justify-content-center">
+    <div id="LoginPanel" class="s-container-tight s-vertical-form"></div>
+    <partial name="@MVC.Views.Membership.Account.Login._StoreLinks" model=Model />
+</div>
+
+@Html.ModulePageInit(ESM.LoginPage, Model)

@@ -1,0 +1,25 @@
+@inject ITextLocalizer Localizer
+@{
+    ViewData["Title"] = "Billing";
+    ViewData["PageId"] = "Billing";
+    
+    string nwLinkFormat = "javascript:;";
+}
+
+
+@section Head {
+@Html.StyleBundle("Pages/Dashboard")
+}
+<!-- Display a payment form -->
+<div id="checkout" >
+    <!-- Checkout will insert the payment form here -->
+</div>
+
+@Html.ModulePageInit(ESM.CheckoutPage, new
+{
+
+    nwLinkFormat
+})
+<script src="https://js.stripe.com/basil/stripe.js"></script>
+@* <script type="module" src="/Scripts/Stripe/CheckoutPage.js"></script> *@
+

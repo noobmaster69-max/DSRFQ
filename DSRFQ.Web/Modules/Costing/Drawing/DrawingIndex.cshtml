@@ -1,0 +1,25 @@
+@inject ITextLocalizer Localizer
+@{
+    ViewData["Title"] = "Drawing";
+    ViewData["PageId"] = "Drawing";
+    
+    string nwLinkFormat = "javascript:;";
+}
+
+
+@section Head {
+@Html.StyleBundle("Pages/Drawing")
+}
+
+
+<div id="DrawingLibrary">
+</div>
+
+
+
+
+@Html.ModulePageInit(ESM.DrawingPage, new
+{
+    
+    nwLinkFormat
+})
