@@ -9,6 +9,7 @@
 
 [assembly: NavigationSection("Master/Material")]
 [assembly: NavigationSection("Master/Machine")]
+[assembly: NavigationSection("Master/Process")]
 
 [assembly: NavigationSection("Master/General")]
 

@@ -5,6 +5,7 @@ using System;
 using System.ComponentModel;
 using DSRFQ.Company;
 using DSRFQ.Master;
+using DSRFQ.Modules.Common.Permissions;
 using DSRFQ.Web.Modules;
 
 namespace DSRFQ.Machines;
@@ -15,7 +16,7 @@ namespace DSRFQ.Machines;
 [InsertPermission("?")]
 [UpdatePermission("?")]
 [DeletePermission("?")]
-[NavigationPermission("?")]
+[NavigationPermission(MasterPermissionKeys.MasterMachineNavigation)]
 
 [ServiceLookupPermission("?")]
 

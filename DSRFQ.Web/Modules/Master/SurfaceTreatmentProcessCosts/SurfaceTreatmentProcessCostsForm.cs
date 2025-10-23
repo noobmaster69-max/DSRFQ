@@ -7,10 +7,12 @@ namespace DSRFQ.Master.Forms;
 [BasedOnRow(typeof(SurfaceTreatmentProcessCostsRow), CheckNames = true)]
 public class SurfaceTreatmentProcessCostsForm
 {
-    [OneThirdWidth(UntilNext = true)]
+    [HalfWidth(UntilNext = true)]
 
     public int DimensionUnitId { get; set; }
-    public decimal PricePerUnitArea { get; set; }
     public bool Default { get; set; }
+    public decimal PricePerUnitArea { get; set; }
+    public int CurrencyId { get; set; }
+    
     
 }

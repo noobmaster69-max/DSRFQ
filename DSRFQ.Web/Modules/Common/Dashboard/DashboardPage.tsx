@@ -1,4 +1,4 @@
-import { faIcon, stringFormat } from "@serenity-is/corelib";
+import {Authorization, faIcon, stringFormat,notifyError, notifySuccess, serviceRequest,serviceCall} from "@serenity-is/corelib";
 import * as preact from "preact";
 import { DashboardPageModel } from "../../ServerTypes/Common/DashboardPageModel";
 import { CalendarCard } from "./calendar/calendar-card";
@@ -8,8 +8,22 @@ import { SmallCard } from "./shared/small-card";
 import { TodoCard } from "./todo/todo-card";
 import { TrafficCard } from "./traffic/traffic-card";
 import { VisitorsCard } from "./visitors/visitors-card";
+import {CompanyDiv, CreateNewDiv} from "../../Company/Organization/organizationDetail/organization-detail";
 export default function pageInit({ model, nwLinkFormat }: { model: DashboardPageModel, nwLinkFormat: string }){
+    serviceCall({
+        url: '/FetchCompanyDetail',
+        request: {},
+        blockUI: false
+    }).then(response => {
+        if( Object.keys(response).length > 0){
+            
+        }
+        else{
+            window.location.replace('/OrganizationDetail');
+        }
+    })
     
+   
 }
 // export default function pageInit({ model, nwLinkFormat }: { model: DashboardPageModel, nwLinkFormat: string }) {
 //

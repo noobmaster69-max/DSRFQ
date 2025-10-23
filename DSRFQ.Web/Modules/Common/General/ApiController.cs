@@ -4,6 +4,7 @@ using DSRFQ.Company;
 using System.Collections.Generic;
 using System.IO;
 using DSRFQ.Common;
+using DSRFQ.Modules.Common.Permissions;
 using DSRFQ.Wallet;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -59,6 +60,28 @@ public class ApiController : ServiceEndpoint
                 UserId = userId,
                 CompanyId = Convert.ToInt32(companyId.Value)
             });
+            uow.Connection.Insert(new UserPermissionRow
+            {
+                UserId = userId,
+                PermissionKey = MasterPermissionKeys.MasterMaterialNavigation
+            });
+            uow.Connection.Insert(new UserPermissionRow
+            {
+                UserId = userId,
+                PermissionKey = MasterPermissionKeys.MasterMachineNavigation
+            });
+            uow.Connection.Insert(new UserPermissionRow
+            {
+                UserId = userId,
+                PermissionKey = MasterPermissionKeys.MasterSpNavigation
+            });
+            uow.Connection.Insert(new UserPermissionRow
+            {
+                UserId = userId,
+                PermissionKey = DrawingPermissionKeys.Navigation
+            });
+            var fld = UserPermissionRow.Fields;
+            Cache.InvalidateOnCommit(uow, fld);
             return StatusCode(200, "Success");
         }
         catch (Exception ex)

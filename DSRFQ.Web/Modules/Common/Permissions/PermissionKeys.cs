@@ -81,4 +81,44 @@ public class MasterPermissionKeys
     public const string MasterDimensionUnitView = "Master:Dimension Unit:View";
     [Description("Navigation")]
     public const string MasterDimensionUnitNavigation = "Master:Dimension Unit:Navigation";
+    
+    //machine
+    [Description("Insert")]
+    public const string MasterMachineInsert = "Master:Machine:Insert";
+    [Description("Update")]
+    public const string MasterMachineUpdate = "Master:Machine:Update";
+    [Description("Delete")]
+    public const string MasterMachineDelete = "Master:Machine:Delete";
+    [Description("View")]
+    public const string MasterMachineView = "Master:Machine:View";
+    [Description("Navigation")]
+    public const string MasterMachineNavigation = "Master:Machine:Navigation";
+    
+    //Special Process
+    [Description("Insert")]
+    public const string MasterSpInsert = "Master:Special Process:Insert";
+    [Description("Update")]
+    public const string MasterSpUpdate = "Master:Special Process:Update";
+    [Description("Delete")]
+    public const string MasterSpDelete = "Master:Special Process:Delete";
+    [Description("View")]
+    public const string MasterSpView = "Master:Special Process:View";
+    [Description("Navigation")]
+    public const string MasterSpNavigation = "Master:Special Process:Navigation";
+}
+
+[NestedPermissionKeys]
+[DisplayName("Drawing")]
+public class DrawingPermissionKeys
+{
+    [Description("Insert")]
+    public const string Insert = "Drawing:Insert";
+    [Description("Update")]
+    public const string Update = "Drawing:Update";
+    [Description("Delete")]
+    public const string Delete = "Drawing:Delete";
+    [Description("View")]
+    public const string View = "Drawing:View";
+    [Description("Navigation")]
+    public const string Navigation = "Drawing:Navigation";
 }

@@ -15,7 +15,7 @@ namespace DSRFQ.Material;
 [InsertPermission("?")]
 [UpdatePermission("?")]
 [DeletePermission("?")]
-[NavigationPermission("?")]
+[NavigationPermission(MasterPermissionKeys.MasterMaterialNavigation)]
 
 [ServiceLookupPermission("?")]
 

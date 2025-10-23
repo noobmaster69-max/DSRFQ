@@ -4,6 +4,7 @@ using Serenity.Data.Mapping;
 using System;
 using System.ComponentModel;
 using DSRFQ.Company;
+using DSRFQ.Modules.Common.Permissions;
 using DSRFQ.Web.Modules;
 
 namespace DSRFQ.Master;
@@ -14,7 +15,7 @@ namespace DSRFQ.Master;
 [InsertPermission("?")]
 [UpdatePermission("?")]
 [DeletePermission("?")]
-[NavigationPermission("?")]
+[NavigationPermission(MasterPermissionKeys.MasterSpNavigation)]
 
 [ServiceLookupPermission("?")]
 

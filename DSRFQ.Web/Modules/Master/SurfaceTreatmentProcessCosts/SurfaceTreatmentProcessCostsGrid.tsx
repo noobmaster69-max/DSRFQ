@@ -1,6 +1,8 @@
 ﻿import { Decorators, EntityGrid } from '@serenity-is/corelib';
-import { SurfaceTreatmentProcessCostsColumns, SurfaceTreatmentProcessCostsRow, SurfaceTreatmentProcessCostsService } from '../../ServerTypes/Master';
 import { SurfaceTreatmentProcessCostsDialog } from './SurfaceTreatmentProcessCostsDialog';
+import {SurfaceTreatmentProcessCostsColumns} from "../../ServerTypes/Master/SurfaceTreatmentProcessCostsColumns";
+import {SurfaceTreatmentProcessCostsRow} from "../../ServerTypes/Master/SurfaceTreatmentProcessCostsRow";
+import {SurfaceTreatmentProcessCostsService} from "../../ServerTypes/Master/SurfaceTreatmentProcessCostsService";
 
 @Decorators.registerClass('DSRFQ.Master.SurfaceTreatmentProcessCostsGrid')
 export class SurfaceTreatmentProcessCostsGrid extends EntityGrid<SurfaceTreatmentProcessCostsRow> {

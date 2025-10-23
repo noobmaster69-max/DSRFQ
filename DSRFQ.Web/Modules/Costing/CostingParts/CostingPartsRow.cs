@@ -5,6 +5,7 @@ using System;
 using System.ComponentModel;
 using DSRFQ.Company;
 using DSRFQ.Master;
+using DSRFQ.Modules.Common.Permissions;
 using DSRFQ.Web.Modules;
 
 namespace DSRFQ.Costing;
@@ -14,6 +15,7 @@ namespace DSRFQ.Costing;
 [ReadPermission("?")]
 [ModifyPermission("?")]
 [ServiceLookupPermission("?")]
+[NavigationPermission(DrawingPermissionKeys.Navigation)]
 [LookupScript("CostingParts",Permission = "?",LookupType = typeof(MultiCompanyRowLookupScript<>))]
 public sealed class CostingPartsRow : LoggingRow<CostingPartsRow.RowFields>, IIdRow, INameRow,IMultiCompanyRow
 {

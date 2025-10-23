@@ -21,7 +21,9 @@ public sealed class SurfaceTreatmentProcessCostsRow : LoggingRow<SurfaceTreatmen
 {
     const string jSurfaceTreatmentProcess = nameof(jSurfaceTreatmentProcess);
     const string jDimensionUnit = nameof(jDimensionUnit);
+    const string jCurrency = nameof(jCurrency);
 
+    
     [DisplayName("Id"), Column("ID"), Identity, IdProperty]
     public int? Id { get => fields.Id[this]; set => fields.Id[this] = value; }
 
@@ -47,7 +49,16 @@ public sealed class SurfaceTreatmentProcessCostsRow : LoggingRow<SurfaceTreatmen
 
     [DisplayName("Dimension Unit Code"), Origin(jDimensionUnit, nameof(DimensionUnitsRow.Code)),LookupInclude]
     public string DimensionUnitCode { get => fields.DimensionUnitCode[this]; set => fields.DimensionUnitCode[this] = value; }
-
+    [LookupEditor(typeof(CurrenciesRow))]
+    [DisplayName("Currency"), Column("CurrencyID"), NotNull,ForeignKey("MasterCurrencies", "ID")]
+    [LeftJoin(jCurrency), TextualField(nameof(CurrencyCode))]
+    public int? CurrencyId { get => fields.CurrencyId[this]; set => fields.CurrencyId[this] = value; }
+    [DisplayName("Currency Code"), Expression($"{jCurrency}.[Code]"),LookupInclude]
+    public string CurrencyCode
+    {
+        get => fields.CurrencyCode[this];
+        set => fields.CurrencyCode[this] = value;
+    }
     public class RowFields : LoggingRowFields
     {
         public Int32Field Id;
@@ -59,5 +70,7 @@ public sealed class SurfaceTreatmentProcessCostsRow : LoggingRow<SurfaceTreatmen
 
         public StringField SurfaceTreatmentProcessName;
         public StringField DimensionUnitCode;
+        public Int32Field CurrencyId;
+        public StringField CurrencyCode;
     }
 }

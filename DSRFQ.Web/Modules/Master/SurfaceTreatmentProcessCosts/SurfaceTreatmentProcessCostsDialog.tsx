@@ -1,9 +1,11 @@
 ﻿import { Decorators, EntityDialog } from '@serenity-is/corelib';
-import { SurfaceTreatmentProcessCostsForm, SurfaceTreatmentProcessCostsRow, SurfaceTreatmentProcessCostsService } from '../../ServerTypes/Master';
 import {GridEditorDialog} from "@serenity-is/extensions";
+import {SurfaceTreatmentProcessCostsService} from "../../ServerTypes/Master/SurfaceTreatmentProcessCostsService";
+import {SurfaceTreatmentProcessCostsForm} from "../../ServerTypes/Master/SurfaceTreatmentProcessCostsForm";
+import {SurfaceTreatmentProcessCostsRow} from "../../ServerTypes/Master/SurfaceTreatmentProcessCostsRow";
 
 @Decorators.registerClass('DSRFQ.Master.SurfaceTreatmentProcessCostsDialog')
-export class SurfaceTreatmentProcessCostsDialog extends GridEditorDialog<SurfaceTreatmentProcessCostsRow, any> {
+export class SurfaceTreatmentProcessCostsDialog extends GridEditorDialog<SurfaceTreatmentProcessCostsRow> {
    
 
     protected getFormKey() { return SurfaceTreatmentProcessCostsForm.formKey; }

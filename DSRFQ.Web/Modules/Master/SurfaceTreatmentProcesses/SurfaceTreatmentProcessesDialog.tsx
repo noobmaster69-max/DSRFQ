@@ -1,6 +1,8 @@
 ﻿import { Decorators, EntityDialog } from '@serenity-is/corelib';
-import { SurfaceTreatmentProcessesForm, SurfaceTreatmentProcessesRow, SurfaceTreatmentProcessesService } from '../../ServerTypes/Master';
 import "../SurfaceTreatmentProcessCosts/SurfaceTreatmentProcessCostsEditor"
+import {SurfaceTreatmentProcessesRow} from "../../ServerTypes/Master/SurfaceTreatmentProcessesRow";
+import {SurfaceTreatmentProcessesForm} from "../../ServerTypes/Master/SurfaceTreatmentProcessesForm";
+import {SurfaceTreatmentProcessesService} from "../../ServerTypes/Master/SurfaceTreatmentProcessesService";
 
 @Decorators.registerClass('DSRFQ.Master.SurfaceTreatmentProcessesDialog')
 export class SurfaceTreatmentProcessesDialog extends EntityDialog<SurfaceTreatmentProcessesRow, any> {

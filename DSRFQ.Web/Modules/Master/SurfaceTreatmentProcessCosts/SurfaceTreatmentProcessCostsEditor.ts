@@ -18,9 +18,7 @@ export class SurfaceTreatmentProcessCostsEditor<P = {}>
     protected override async validateEntity(row: SurfaceTreatmentProcessCostsRow, id: any) {
         row.DimensionUnitId = toId(row.DimensionUnitId);
 
-        const lookup = await DimensionUnitsRow.getLookupAsync();
-        row.DimensionUnitCode = lookup.itemById[row.DimensionUnitId].Code;
-
+       
         return true;
     }
 

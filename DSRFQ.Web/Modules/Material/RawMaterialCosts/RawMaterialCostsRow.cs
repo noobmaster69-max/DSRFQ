@@ -5,6 +5,7 @@ using System;
 using System.ComponentModel;
 using DSRFQ.Company;
 using DSRFQ.Master;
+using DSRFQ.Modules.Common.Permissions;
 using DSRFQ.Web.Modules;
 
 namespace DSRFQ.Material;
@@ -15,7 +16,7 @@ namespace DSRFQ.Material;
 [InsertPermission("?")]
 [UpdatePermission("?")]
 [DeletePermission("?")]
-[NavigationPermission("?")]
+[NavigationPermission(MasterPermissionKeys.MasterMaterialNavigation)]
 
 [ServiceLookupPermission("?")]
 [LookupScript("MaterialRawMaterialCosts",Permission = "?",LookupType = typeof(MultiCompanyRowLookupScript<>))]

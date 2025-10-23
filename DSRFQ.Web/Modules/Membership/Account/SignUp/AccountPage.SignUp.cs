@@ -88,6 +88,8 @@ public partial class AccountPage : Controller
             var email = request.Email;
             var username = request.Email;
 
+
+            
             var userId = (int)connection.InsertAndGetID(new UserRow
             {
                 Username = username,
@@ -100,7 +102,7 @@ public partial class AccountPage : Controller
                 InsertDate = DateTime.Now,
                 InsertUserId = 1,
                 LastDirectoryUpdate = DateTime.Now,
-                UserInvitationId = request.UserInvitationId
+                UserInvitationId = request.UserInvitationId == 0?null:request.UserInvitationId
             });
 
             SendActivationEmail(

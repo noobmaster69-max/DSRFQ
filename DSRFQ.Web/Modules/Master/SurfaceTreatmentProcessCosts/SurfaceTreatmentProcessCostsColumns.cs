@@ -12,6 +12,7 @@ public class SurfaceTreatmentProcessCostsColumns
     public int Id { get; set; }
     public string DimensionUnitCode { get; set; }
     public decimal PricePerUnitArea { get; set; }
+    public string CurrencyCode { get; set; }
     public bool Default { get; set; }
     public DateTime InsertDate { get; set; }
     public string InsertBy { get; set; }
