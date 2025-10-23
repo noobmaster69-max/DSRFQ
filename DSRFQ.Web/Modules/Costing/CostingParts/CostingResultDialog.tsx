@@ -756,8 +756,128 @@ export class CostingResultDialog<P = {}> extends BaseDialog<P> {
                         background-color:#27dc3c;
                         margin-top:10px;
                     }
-                    #table-input{
+                    
+                     .table-input{
                         width:100%;
+                    }
+                    :root {
+                        --primary-color: #2563eb;
+                        --accent-color: #f97316;
+                        --background-light: #f8fafc;
+                        --border-light: #e2e8f0;
+                        --text-dark: #1e293b;
+                        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+                        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+                        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+                    }
+                
+                    .enhanced-table {
+                        background-color: var(--s-card-bg) !important;
+                        border-radius: 20px;
+                        overflow: hidden;
+                        box-shadow: var(--shadow-md);
+                        border: 1px solid var(--border-light);
+                    }
+                
+                    .table-header {
+                        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+                        border-bottom: 2px solid var(--border-light);
+                    }
+                
+                    .table th {
+                        border: none;
+                        padding: 20px 16px;
+                        font-weight: 700;
+                        font-size: 0.875rem;
+                        text-transform: uppercase;
+                        letter-spacing: 0.05em;
+                        color: var(--s-card-title);
+                        position: relative;
+
+                    }
+                
+                    .table th:not(:last-child)::after {
+                        content: '';
+                        position: absolute;
+                        right: 0;
+                        top: 25%;
+                        height: 50%;
+                        width: 1px;
+                        background: var(--border-light);
+                    }
+                
+                    .table td {
+                        border: none;
+                        padding: 20px 16px;
+                        vertical-align: middle;
+                        border-bottom: 1px solid #f1f5f9;
+                        transition: all 0.3s ease;
+                    }
+                
+                    .table tbody tr {
+                        transition: all 0.3s ease;
+                    }
+                
+                    .table tbody tr:hover {
+                        background: linear-gradient(135deg, rgba(37, 99, 235, 0.02), rgba(59, 130, 246, 0.02));
+                        transform: translateX(4px);
+                        box-shadow: inset 4px 0 0 var(--primary-color);
+                    }
+                
+                    /* Enhanced Add Button */
+                    .btn-add {
+                        width: 44px;
+                        height: 44px;
+                        border-radius: 16px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        background: linear-gradient(135deg, var(--accent-color), #ea580c);
+                        border: none;
+                        color: white;
+                        font-size: 18px;
+                        box-shadow: var(--shadow-md);
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        position: relative;
+                        overflow: hidden;
+                    }
+                    #bom{
+                        background-color: var(--s-card-bg);
+                    }
+                    #bom:not(.show) {
+                      display: none; 
+                    }
+                    .tab-pane.active {
+                      display: block;
+                    }
+                    #costingDetail:not(.show) {
+                        display: none;
+                    }
+                    .drawing-error-category{
+                      display:flex;
+                      height:40px;
+                      justify-content: start;
+                      align-items: center;
+                      border:1px solid var(--s-input-border);
+                      border-radius:5px;
+                      margin-top:10px;
+                    }
+                    .drawing-error-category-input-div{
+                      width: 40px;
+                      height: 40px;
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                      margin-right:10px;
+                      
+                    }
+                    .drawing-error-category-input{
+                        width:100%
+                    }
+                    .drawing-error-category-name{
+                      word-wrap: break-word;    
+                        white-space: normal;
+                        padding:10px;
                     }
                  `
 
@@ -814,8 +934,8 @@ export class CostingResultDialog<P = {}> extends BaseDialog<P> {
 
                                 </div>
                                 <div className="tab-pane fade" id="costingDetail" role="tabpanel">
-                                        <table>
-                                            <thead>
+                                        <table  class="table enhanced-table table-striped">
+                                            <thead class="table-header">
                                             <tr>
                                                 <th>#</th>
                                                 <th>Costing Category</th>
@@ -969,8 +1089,8 @@ export class CostingResultDialog<P = {}> extends BaseDialog<P> {
                                     </ul>
                                     <div className={"tab-content"}>
                                         <div class="tab-pane fade show active" id="bom" role="tabpane1">
-                                            <table>
-                                                <thead>
+                                            <table class="table enhanced-table table-striped">
+                                                <thead class="table-header">
                                                 <tr>
                                                     <th></th>
                                                     <th><button id="add-bom-button" className={"btn"} style={{width:"30px",height:"30px",fontWeight:"bold",borderRadius:"5px",display:"flex",justifyContent:"center",alignItems:"center",backgroundColor:"var(--bs-orange)",color:"#ffffff",fontSize:"18px"}}><i className={"fa fa-plus"}></i></button></th>
@@ -986,8 +1106,8 @@ export class CostingResultDialog<P = {}> extends BaseDialog<P> {
                                             </table>
                                         </div>
                                         <div class="tab-pane fade" id="specialProcess" role="tabpane1">
-                                            <table>
-                                                <thead>
+                                            <table  class="table enhanced-table table-striped">
+                                                <thead class="table-header">
                                                 <tr>
                                                     <th>#</th>
                                                     <th>Name</th>

@@ -1,4 +1,5 @@
 using DSRFQ.Administration;
+using DSRFQ.Modules.Common.Permissions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
@@ -104,10 +105,34 @@ public partial class AccountPage : Controller
                 LastDirectoryUpdate = DateTime.Now,
                 UserInvitationId = request.UserInvitationId == 0?null:request.UserInvitationId
             });
-
+            
             SendActivationEmail(
                 siteAbsoluteUrl, emailSender, userId, username, displayName, email);
-
+            if (request.UserInvitationId != 0)
+            {
+                var fld = UserPermissionRow.Fields;
+                uow.Connection.Insert(new UserPermissionRow
+                {
+                    UserId = userId,
+                    PermissionKey = MasterPermissionKeys.MasterMaterialNavigation
+                });
+                uow.Connection.Insert(new UserPermissionRow
+                {
+                    UserId = userId,
+                    PermissionKey = MasterPermissionKeys.MasterMachineNavigation
+                });
+                uow.Connection.Insert(new UserPermissionRow
+                {
+                    UserId = userId,
+                    PermissionKey = MasterPermissionKeys.MasterSpNavigation
+                });
+                uow.Connection.Insert(new UserPermissionRow
+                {
+                    UserId = userId,
+                    PermissionKey = DrawingPermissionKeys.Navigation
+                });
+                Cache.InvalidateOnCommit(uow, fld);
+            }
             uow.Commit();
 
             userProvider.RemoveCachedUser(userId.ToInvariant(), username);

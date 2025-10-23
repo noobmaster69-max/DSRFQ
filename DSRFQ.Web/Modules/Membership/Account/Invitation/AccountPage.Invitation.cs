@@ -137,6 +137,9 @@ public partial class AccountPage : Controller
         });
 
         Cache.InvalidateOnCommit(uow, UserInvitationsRow.Fields);
+        
+       
+        
         uow.Commit();
 
         return new RedirectResult(
