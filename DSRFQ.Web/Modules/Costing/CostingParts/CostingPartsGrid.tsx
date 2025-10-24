@@ -64,7 +64,7 @@ export class CostingPartsGrid extends EntityGrid<CostingPartsRow> {
     }
 
     protected getButtons(): ToolButton[] {
-
+        let grid = this
         var buttons = super.getButtons();
         buttons.splice(indexOf(buttons, x => x.cssClass == "add-button"), 1);
         buttons.push({
@@ -75,9 +75,10 @@ export class CostingPartsGrid extends EntityGrid<CostingPartsRow> {
 
                 var dialog = new DrawingImportDialog();
                 dialog.element.on('dialogclose', () => {
-                    this.refresh();
+                    grid.refresh();
                     dialog = null;
                 });
+                
                 dialog.dialogOpen();
             }
         });

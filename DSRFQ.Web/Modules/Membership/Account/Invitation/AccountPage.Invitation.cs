@@ -24,17 +24,19 @@ public partial class AccountPage : Controller
         var externalUrl = siteAbsoluteUrl.GetExternalUrl();
         var activateLink = UriHelper.Combine(externalUrl, "Account/AcceptInvitation?t=");
         activateLink += Uri.EscapeDataString(token);
-
+        string siteTitle = AppConfigHelper.GetConfigValue("Company:ShortName");
         var emailModel = new InviteEmailModel
         {
             EmailAddress = email,
             DisplayName = displayName,
             ActivateLink = activateLink,
-            BaseUrl = $"{Request.Scheme}://{Request.Host}"
+            BaseUrl = $"{Request.Scheme}://{Request.Host}",
+            CompanyName = siteTitle
         };
+        
 
         var emailSubject = SignUpFormTexts.ActivateEmailSubject.ToString(Localizer);
-        emailSubject = "Invitation to join DSRFQ";
+        emailSubject = $"Invitation to join {siteTitle}";
         var emailBody = TemplateHelper.RenderViewToString(HttpContext.RequestServices,
             MVC.Views.Membership.Account.Invitation.InviteEmail, emailModel);
 

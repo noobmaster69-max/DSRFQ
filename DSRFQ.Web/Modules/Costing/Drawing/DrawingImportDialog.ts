@@ -89,6 +89,8 @@ export class DrawingImportDialog extends PropertyDialog<any, any> {
                             }
                         );
                         notifySuccess("The drawings have been uploaded.")
+                        th.element.trigger('dialogclose');
+
                         th.dialogClose()
                     })
                     
@@ -100,5 +102,8 @@ export class DrawingImportDialog extends PropertyDialog<any, any> {
                 click: () => this.dialogClose()
             }
         ];
+    }
+    protected onDialogClose(result?: string) {
+        super.onDialogClose(result);
     }
 }

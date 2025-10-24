@@ -23,6 +23,7 @@ public partial class Startup
         Configuration = configuration;
         HostEnvironment = hostEnvironment;
         RegisterDataProviders();
+        AppConfigHelper.Initialize(configuration);
     }
 
     public IConfiguration Configuration { get; }

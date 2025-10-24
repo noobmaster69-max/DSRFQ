@@ -6,4 +6,5 @@ public class InviteEmailModel
     public string DisplayName { get; set; }
     public string ActivateLink { get; set; }
     public string BaseUrl { get; set; }
+    public string CompanyName { get; set; }
 }
