@@ -39,7 +39,7 @@ export class CostingResultDialog<P = {}> extends BaseDialog<P> {
             3: { color: "#6c757d", label: "Other" }
         };
 
-
+        
         CostingPartDocumentsService.List({
             Criteria:Criteria.and(Criteria("IsActive").eq("1"),Criteria("CostingPartID").eq(this.costingPartId)),
             Sort:["Type ASC"]
@@ -259,14 +259,14 @@ export class CostingResultDialog<P = {}> extends BaseDialog<P> {
             let cr = <>
                 {
                     costingResult.Entities.map((data,index)=>{
-                        return (<tr>
+                        return (<tr data-id={data.Id}>
                             <td>{index+1}</td>
                             <td>{data.CostingCategoryId==undefined?"":data.CostingCategoryId}</td>
                             <td>{data.Name}</td>
                             <td>{data.Description}</td>
-                            <td>{data.Quantity}</td>
-                            <td>{data.UnitPrice}</td>
-                            <td>{data.Total}</td>
+                            <td><input value={data.Quantity} type={"number"} class="qty-input"></input></td>
+                            <td><input value={data.UnitPrice} type={"number"} class="price-input"></input></td>
+                            <td class="row-total">{data.Total}</td>
                             <td>{data.CurrencyCode}</td>
 
                         </tr>)
@@ -282,7 +282,7 @@ export class CostingResultDialog<P = {}> extends BaseDialog<P> {
                 <td></td>
                 <td></td>
                 <td></td>
-                <td className={"footer-total"}>{total}</td>
+                <td id={"footer-total"} class={"footer-total"}>{total}</td>
                 <td className={"footer-total"}>{currencyCode}</td>
             </tr>
             document.getElementById("costing-body").innerHTML = ""
@@ -292,11 +292,86 @@ export class CostingResultDialog<P = {}> extends BaseDialog<P> {
             document.getElementById("costing-summary-currency").innerHTML = currencyCode
             document.getElementById("costing-summary-total").innerHTML = String(total)
 
+            
+            const tbody = document.getElementById("costing-body");
+            const footerTotal = document.getElementById("footer-total");
+            updateFooterTotal();
+            attachInputListeners();
+            function attachInputListeners() {
+                const rows = tbody.querySelectorAll("tr");
+                rows.forEach((row, index) => {
+                    const qtyInput = row.querySelector(".qty-input");
+                    const priceInput = row.querySelector(".price-input");
+                    const totalCell = row.querySelector(".row-total");
+
+                    function recalc() {
+                        const qty = parseFloat(qtyInput.value) || 0;
+                        const price = parseFloat(priceInput.value) || 0;
+                        const total = qty * price;
+
+                       
+                        console.log(total);
+                        totalCell.textContent = total.toFixed(2);
+                        updateFooterTotal();
+                    }
+
+                    qtyInput.addEventListener("input", recalc);
+                    priceInput.addEventListener("input", recalc);
+                });
+            }
+
+            // Function to recalculate footer total
+            function updateFooterTotal() {
+                const totals = tbody.querySelectorAll(".row-total");
+                let sum = 0;
+
+                totals.forEach(cell => {
+                    const val = parseFloat(cell.textContent) || 0;
+                    sum += val;
+                });
+
+                footerTotal.textContent = sum.toFixed(2);
+                document.getElementById("costing-summary-total").textContent = sum.toFixed(2);
+
+            }
 
         })
         this.addBom()
         this.saveResult()
+        this.saveCostingResult()
 
+    }
+    protected saveCostingResult() {
+        const saveCostingButton = document.getElementById("save-costing-button");
+        saveCostingButton.addEventListener("click", (e) => {
+            const tbody = document.getElementById("costing-body");
+            const rows = tbody.querySelectorAll("tr");
+            rows.forEach(async (row, index) => {
+                const rowId = row.getAttribute("data-id")
+                const qtyInput = row.querySelector(".qty-input");
+                const priceInput = row.querySelector(".price-input");
+                const totalCell = row.querySelector(".row-total");
+
+               
+                const qty = parseFloat(qtyInput.value) || 0;
+                const price = parseFloat(priceInput.value) || 0;
+                const total = qty * price;
+                
+                await CostingPartCostingResultsService.Update({
+                    EntityId: rowId,
+                    Entity:{
+                        Quantity:qty,
+                        UnitPrice:price,
+                        Total:total,
+                    }
+                })
+                
+
+                   
+            });
+            notifySuccess("The costing result has been saved.")
+            
+        })
     }
     protected addBom(){
         const bomButton = document.getElementById("add-bom-button");
@@ -938,6 +1013,7 @@ export class CostingResultDialog<P = {}> extends BaseDialog<P> {
                                             <thead class="table-header">
                                             <tr>
                                                 <th>#</th>
+                                                
                                                 <th>Costing Category</th>
                                                 <th>Name</th>
                                                 <th>Description</th>
@@ -952,6 +1028,7 @@ export class CostingResultDialog<P = {}> extends BaseDialog<P> {
                                             </tbody>
                                             <tfoot id={"costing-footer"}></tfoot>
                                         </table>
+                                        <div style={{display:"flex",justifyContent:"end",alignItems:"center"}}><button class={"btn btn-primary"} id={"save-costing-button"} style={{marginLeft:"auto",width:"100px"}}><i class={"fa fa-save"}></i>Save</button></div>
                                 </div>
                                 <div class="tab-pane fade show active" id="drawingDetail" role="tabpane1">
                                     <div style={{

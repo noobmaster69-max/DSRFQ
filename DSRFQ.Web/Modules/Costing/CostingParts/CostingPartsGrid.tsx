@@ -35,19 +35,31 @@ export class CostingPartsGrid extends EntityGrid<CostingPartsRow> {
                     console.log("Subscribed to Progress")
                 }
             })
+            client.subscribe("Status",err=>{
+                if(!err){
+                    console.log("Subscribed to Progress")
+                }
+            })
         })
         
         client.on("message", (topic,message) => {
             const msg = JSON.parse(message.toString());
-            let id = msg["Id"]
-            let receivedMsg = msg["Message"]
-            th.view.setItems(th.view.getFilteredItems().map(item => {
-                if(item.Id===Number(id)){
-                    item.Message = receivedMsg;
-                    
-                }
-                return item
-            }))
+            if(topic=="Progress"){
+                let id = msg["Id"]
+                let receivedMsg = msg["Message"]
+                th.view.setItems(th.view.getFilteredItems().map(item => {
+                    if(item.Id===Number(id)){
+                        item.Message = receivedMsg;
+
+                    }
+                    return item
+                }))
+            }
+            else if(topic=="Status"){
+                th.refresh()
+            }
+            
+            
         })
         // setInterval(()=>{
         //    
