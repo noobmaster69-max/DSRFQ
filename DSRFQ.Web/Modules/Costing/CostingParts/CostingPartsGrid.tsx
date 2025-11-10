@@ -5,6 +5,7 @@ import {DrawingImportDialog} from "../Drawing/DrawingImportDialog";
 import {Column, GridOptions} from "@serenity-is/sleekgrid";
 import {CostingResultDialog} from "./CostingResultDialog";
 import mqtt from "mqtt"
+import * as signalR from "@microsoft/signalr";
 
 @Decorators.registerClass('DSRFQ.Costing.CostingPartsGrid')
 export class CostingPartsGrid extends EntityGrid<CostingPartsRow> {
@@ -23,6 +24,13 @@ export class CostingPartsGrid extends EntityGrid<CostingPartsRow> {
         let th = this
         let i = 0
         const QUEUE_NAME = 'NewCostingParts';
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chatHub")
+            .build();
+
+        connection.on("ChangeInStatus", (data) => {
+            th.refresh()
+        });
         const client = mqtt.connect("ws://localhost:15675/ws",{
             username:"guest",
             password:"guest",

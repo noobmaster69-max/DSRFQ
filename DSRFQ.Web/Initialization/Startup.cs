@@ -129,7 +129,7 @@ public partial class Startup
         }
         services.TryAddSingleton<IPermissionService, AppServices.PermissionService>();
         services.AddScoped<IPdfProcessor, PdfProcessor>();
-
+        services.AddSingleton<ChatHub>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
