@@ -3,16 +3,21 @@ using Serenity.Data;
 using Serenity.Data.Mapping;
 using System;
 using System.ComponentModel;
+using DSRFQ.Modules.Common.Permissions;
 
 namespace DSRFQ.Master;
 
 [ConnectionKey("Default"), Module("Master"), TableName("MasterSurfaceTreatmentProcessCosts")]
 [DisplayName("Surface Treatment Process Costs"), InstanceName("Surface Treatment Process Costs")]
+// [ReadPermission(MasterPermissionKeys.MasterSpView)]
+// [InsertPermission(MasterPermissionKeys.MasterSpInsert)]
+// [UpdatePermission(MasterPermissionKeys.MasterSpUpdate)]
+// [DeletePermission(MasterPermissionKeys.MasterSpDelete)]
 [ReadPermission("?")]
 [InsertPermission("?")]
 [UpdatePermission("?")]
 [DeletePermission("?")]
-[NavigationPermission("?")]
+[NavigationPermission(MasterPermissionKeys.MasterSpNavigation)]
 
 [ServiceLookupPermission("?")]
 

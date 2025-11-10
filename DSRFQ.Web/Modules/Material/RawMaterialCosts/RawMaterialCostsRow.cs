@@ -12,10 +12,10 @@ namespace DSRFQ.Material;
 
 [ConnectionKey("Default"), Module("Material"), TableName("MaterialRawMaterialCosts")]
 [DisplayName("Raw Material Costs"), InstanceName("Raw Material Costs")]
-[ReadPermission("?")]
-[InsertPermission("?")]
-[UpdatePermission("?")]
-[DeletePermission("?")]
+[ReadPermission(MasterPermissionKeys.MasterMaterialView)]
+[InsertPermission(MasterPermissionKeys.MasterMaterialInsert)]
+[UpdatePermission(MasterPermissionKeys.MasterMaterialUpdate)]
+[DeletePermission(MasterPermissionKeys.MasterMaterialDelete)]
 [NavigationPermission(MasterPermissionKeys.MasterMaterialNavigation)]
 
 [ServiceLookupPermission("?")]

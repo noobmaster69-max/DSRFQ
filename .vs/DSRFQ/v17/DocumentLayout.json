@@ -1,9 +1,9 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\Tsh\\DSRFQ\\",
+  "WorkspaceRootPath": "C:\\Tsh\\DSRFQ\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{54F3D6E5-503C-43FA-A841-45CC71FB4334}|DSRFQ.Web\\DSRFQ.Web.csproj|d:\\tsh\\dsrfq\\dsrfq.web\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "AbsoluteMoniker": "D:0:0:{54F3D6E5-503C-43FA-A841-45CC71FB4334}|DSRFQ.Web\\DSRFQ.Web.csproj|c:\\tsh\\dsrfq\\dsrfq.web\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{54F3D6E5-503C-43FA-A841-45CC71FB4334}|DSRFQ.Web\\DSRFQ.Web.csproj|solutionrelative:dsrfq.web\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
@@ -28,9 +28,9 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "appsettings.json",
-              "DocumentMoniker": "D:\\Tsh\\DSRFQ\\DSRFQ.Web\\appsettings.json",
+              "DocumentMoniker": "C:\\Tsh\\DSRFQ\\DSRFQ.Web\\appsettings.json",
               "RelativeDocumentMoniker": "DSRFQ.Web\\appsettings.json",
-              "ToolTip": "D:\\Tsh\\DSRFQ\\DSRFQ.Web\\appsettings.json",
+              "ToolTip": "C:\\Tsh\\DSRFQ\\DSRFQ.Web\\appsettings.json",
               "RelativeToolTip": "DSRFQ.Web\\appsettings.json",
               "ViewState": "AgIAAAYAAAAAAAAAAAAAABMAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",

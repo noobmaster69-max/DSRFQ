@@ -11,10 +11,16 @@ namespace DSRFQ.Material;
 
 [ConnectionKey("Default"), Module("Material"), TableName("Materials")]
 [DisplayName("Materials"), InstanceName("Materials")]
-[ReadPermission("?")]
-[InsertPermission("?")]
-[UpdatePermission("?")]
-[DeletePermission("?")]
+[ReadPermission(MasterPermissionKeys.MasterMaterialView)]
+[InsertPermission(MasterPermissionKeys.MasterMaterialInsert)]
+[UpdatePermission(MasterPermissionKeys.MasterMaterialUpdate)]
+[DeletePermission(MasterPermissionKeys.MasterMaterialDelete)]
+
+
+
+// [ReadPermission("?")]
+// [ModifyPermission("?")]
+// [DeletePermission('?')]
 [NavigationPermission(MasterPermissionKeys.MasterMaterialNavigation)]
 
 [ServiceLookupPermission("?")]

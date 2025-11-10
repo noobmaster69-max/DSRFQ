@@ -27,10 +27,10 @@ export abstract class MachinesRow {
     static readonly nameProperty = 'Name';
     static readonly localTextPrefix = 'Machines.Machines';
 
-    static readonly deletePermission = 'Administration:General';
-    static readonly insertPermission = 'Administration:General';
-    static readonly readPermission = 'Administration:General';
-    static readonly updatePermission = 'Administration:General';
+    static readonly deletePermission = '?';
+    static readonly insertPermission = '?';
+    static readonly readPermission = '?';
+    static readonly updatePermission = '?';
 
     static readonly Fields = fieldsProxy<MachinesRow>();
 }

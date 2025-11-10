@@ -11,6 +11,10 @@ namespace DSRFQ.Master;
 
 [ConnectionKey("Default"), Module("Master"), TableName("MasterSurfaceTreatmentProcesses")]
 [DisplayName("Special Processes"), InstanceName("Special Processes")]
+// [ReadPermission(MasterPermissionKeys.MasterSpView)]
+// [InsertPermission(MasterPermissionKeys.MasterSpInsert)]
+// [UpdatePermission(MasterPermissionKeys.MasterSpUpdate)]
+// [DeletePermission(MasterPermissionKeys.MasterSpDelete)]
 [ReadPermission("?")]
 [InsertPermission("?")]
 [UpdatePermission("?")]

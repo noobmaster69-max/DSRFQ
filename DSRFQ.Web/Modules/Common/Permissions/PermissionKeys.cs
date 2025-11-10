@@ -122,3 +122,20 @@ public class DrawingPermissionKeys
     [Description("Navigation")]
     public const string Navigation = "Drawing:Navigation";
 }
+[NestedPermissionKeys]
+[DisplayName("Material")]
+public class MaterialPermissionKeys
+{
+    [Description("Insert")]
+    public const string Insert = " Insert";
+    [Description("Update")]
+    public const string Update = "Update";
+    [Description("Modify")]
+    public const string Modify = "Modify";
+    [Description("Delete")]
+    public const string Delete = "Delete";
+    [Description("View")]
+    public const string View = "View";
+    [Description("Navigation")]
+    public const string Navigation = "Navigation";
+}
