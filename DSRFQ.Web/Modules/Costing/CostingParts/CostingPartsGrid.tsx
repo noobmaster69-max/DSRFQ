@@ -29,46 +29,62 @@ export class CostingPartsGrid extends EntityGrid<CostingPartsRow> {
             .build();
 
         connection.on("ChangeInStatus", (data) => {
+            console.log("ChangeInStatus", data);
+            
             th.refresh()
         });
-        const client = mqtt.connect("ws://localhost:15675/ws",{
-            username:"guest",
-            password:"guest",
-        })
-        
-        client.on("connect", () => {
-            console.log("Connected to RabbitMQ Web Mqtt")
-            client.subscribe("Progress",err=>{
-                if(!err){
-                    console.log("Subscribed to Progress")
-                }
-            })
-            client.subscribe("Status",err=>{
-                if(!err){
-                    console.log("Subscribed to Progress")
-                }
-            })
-        })
-        
-        client.on("message", (topic,message) => {
-            const msg = JSON.parse(message.toString());
-            if(topic=="Progress"){
-                let id = msg["Id"]
-                let receivedMsg = msg["Message"]
-                th.view.setItems(th.view.getFilteredItems().map(item => {
-                    if(item.Id===Number(id)){
-                        item.Message = receivedMsg;
+        connection.on("ChangeInMessage", (data) => {
+            console.log("ChangeInMessage", data);
+            let id = data.Id
+            let receivedMsg =  data.Message;
+            th.view.setItems(th.view.getFilteredItems().map(item => {
+                if(item.Id===Number(id)){
+                    item.Message = receivedMsg;
 
-                    }
-                    return item
-                }))
-            }
-            else if(topic=="Status"){
-                th.refresh()
-            }
-            
-            
-        })
+                }
+                return item
+            }))
+
+        });
+        connection.start().catch(err => console.error(err));
+        // const client = mqtt.connect("ws://localhost:15675/ws",{
+        //     username:"guest",
+        //     password:"guest",
+        // })
+        //
+        // client.on("connect", () => {
+        //     console.log("Connected to RabbitMQ Web Mqtt")
+        //     client.subscribe("Progress",err=>{
+        //         if(!err){
+        //             console.log("Subscribed to Progress")
+        //         }
+        //     })
+        //     client.subscribe("Status",err=>{
+        //         if(!err){
+        //             console.log("Subscribed to Progress")
+        //         }
+        //     })
+        // })
+        //
+        // client.on("message", (topic,message) => {
+        //     const msg = JSON.parse(message.toString());
+        //     if(topic=="Progress"){
+        //         let id = msg["Id"]
+        //         let receivedMsg = msg["Message"]
+        //         th.view.setItems(th.view.getFilteredItems().map(item => {
+        //             if(item.Id===Number(id)){
+        //                 item.Message = receivedMsg;
+        //
+        //             }
+        //             return item
+        //         }))
+        //     }
+        //     else if(topic=="Status"){
+        //         th.refresh()
+        //     }
+        //    
+        //    
+        // })
         // setInterval(()=>{
         //    
         //     console.log(i+1)

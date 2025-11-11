@@ -9,4 +9,14 @@ public class ChatHub : Hub
     {
         await Clients.All.SendAsync("ReceiveMessage", user, message);
     }
+    public async Task SendChangeInStatus(object data)
+    {
+        await Clients.All.SendAsync("ChangeInStatus", data);
+            
+    }
+    public async Task SendChangeInMessage(object data)
+    {
+        await Clients.All.SendAsync("ChangeInMessage", data);
+            
+    }
 }

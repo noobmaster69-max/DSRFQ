@@ -36,11 +36,28 @@ namespace DSRFQ.Web.Hubs
         {
             await base.OnDisconnectedAsync(exception);
         }
-        [HttpPost("ChangeInStatus")]
-        public async Task SendChangeInStatus(object data)
+        public async Task SendChangeInProcess(Message data)
         {
+            Console.WriteLine("✅ Change In Process");
+            await Clients.Caller.SendAsync("ChangeInProcess", data);
+        }
+        public async Task SendChangeInStatus(Status data)
+        {
+            Console.WriteLine("Change in status");
             await Clients.All.SendAsync("ChangeInStatus", data);
             
         }
+        
     }
+}
+
+public class Status
+{
+    public int id { get; set; }
+    public string message { get; set; }
+}
+public class Message
+{
+    public int id { get; set; }
+    public string message { get; set; }
 }
