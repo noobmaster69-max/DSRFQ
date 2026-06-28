@@ -23,6 +23,8 @@ export interface SurfaceTreatmentProcessesColumns {
     DateApprove: Column<SurfaceTreatmentProcessesRow>;
     DateExpire: Column<SurfaceTreatmentProcessesRow>;
     Capable: Column<SurfaceTreatmentProcessesRow>;
+    CompanyId: Column<SurfaceTreatmentProcessesRow>;
+    GroupId: Column<SurfaceTreatmentProcessesRow>;
 }
 
 export class SurfaceTreatmentProcessesColumns extends ColumnsBase<SurfaceTreatmentProcessesRow> {

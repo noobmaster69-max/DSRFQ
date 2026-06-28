@@ -13,18 +13,20 @@ export interface SurfaceTreatmentProcessCostsRow {
     DeleteDate?: string;
     DeleteUserId?: number;
     IsActive?: number;
+    CurrencyId?: number;
     SurfaceTreatmentProcessName?: string;
     DimensionUnitCode?: string;
+    CurrencyCode?: string;
 }
 
 export abstract class SurfaceTreatmentProcessCostsRow {
     static readonly idProperty = 'Id';
     static readonly localTextPrefix = 'Master.SurfaceTreatmentProcessCosts';
 
-    static readonly deletePermission = '?';
-    static readonly insertPermission = '?';
-    static readonly readPermission = '?';
-    static readonly updatePermission = '?';
+    static readonly deletePermission = 'Administration:General';
+    static readonly insertPermission = 'Administration:General';
+    static readonly readPermission = 'Administration:General';
+    static readonly updatePermission = 'Administration:General';
 
     static readonly Fields = fieldsProxy<SurfaceTreatmentProcessCostsRow>();
 }

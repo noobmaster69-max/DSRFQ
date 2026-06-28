@@ -20,12 +20,13 @@ export interface SurfaceTreatmentProcessesForm {
     DateApprove: DateEditor;
     DateExpire: DateEditor;
     Capable: IntegerEditor;
+    CompanyId: IntegerEditor;
+    GroupId: IntegerEditor;
 }
 
 export class SurfaceTreatmentProcessesForm extends PrefixedContext {
     static readonly formKey = 'Master.SurfaceTreatmentProcesses';
     private static init: boolean;
-    CostItems: any;
     
     constructor(prefix: string) {
         super(prefix);
@@ -56,6 +57,8 @@ export class SurfaceTreatmentProcessesForm extends PrefixedContext {
             'DateApprove', w2,
             'DateExpire', w2,
             'Capable', w0,
+            'CompanyId', w0,
+            'GroupId', w0,
             ]);
         }
     }

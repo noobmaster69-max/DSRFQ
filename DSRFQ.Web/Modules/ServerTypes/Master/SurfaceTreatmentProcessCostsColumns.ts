@@ -15,6 +15,7 @@ export interface SurfaceTreatmentProcessCostsColumns {
     DeleteDate: Column<SurfaceTreatmentProcessCostsRow>;
     DeleteUserId: Column<SurfaceTreatmentProcessCostsRow>;
     IsActive: Column<SurfaceTreatmentProcessCostsRow>;
+    CurrencyId: Column<SurfaceTreatmentProcessCostsRow>;
 }
 
 export class SurfaceTreatmentProcessCostsColumns extends ColumnsBase<SurfaceTreatmentProcessCostsRow> {

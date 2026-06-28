@@ -7,3 +7,4 @@ using MyPages = DSRFQ.Master.Pages;
 [assembly: NavigationLink(int.MaxValue, "Master/General/Volume Units", typeof(MyPages.VolumeUnitsPage), icon: "fa-box")]
 [assembly: NavigationLink(int.MaxValue, "Master/General/Weight Units", typeof(MyPages.WeightUnitsPage), icon: "fa-weight")]
 [assembly: NavigationLink(int.MaxValue, "Master/Process/Special Process", typeof(MyPages.SurfaceTreatmentProcessesPage), icon: "fa-fire")]
+

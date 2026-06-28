@@ -37,65 +37,42 @@ export class DrawingImportDialog extends PropertyDialog<any, any> {
                 click: () => {
                     if (!this.validateBeforeSave())
                         return;
-                    console.log(this.form.ThreeDFileName.value)
-                    console.log(this.form.TwoDFileName.value)
-                    
-                    if(this.form.TwoDFileName.value ==null && this.form.ThreeDFileName.value == null){
+
+                    if (this.form.FileName.value.length==0 ) {
                         notifyError("Please at least upload a file!");
                         return;
                     }
-                    // if (this.form.FileName.value.length==0 ) {
-                    //     notifyError("Please at least upload a file!");
-                    //     return;
-                    // }
-                    // let files  =this.form.FileName.value
-                    //
-                    //
+                    let files  =this.form.FileName.value
                     CostingPartsService.Create({
                         Entity:{
-
+                            
                         }
                     },async response=>{
-                        if(th.form.TwoDFileName.value != null){
-                            const twoDext = th.form.TwoDFileName.value.OriginalName.split('.').pop().toLowerCase();
+                        for(let i =0;i<files.length;i++){
+                            const ext = files[i].OriginalName.split('.').pop().toLowerCase();
+
                             const twoD = ["pdf", "svg", "png", "jpg", "jpeg", "tiff", "bmp"];
+                            const threeD = ["stl", "step", "stp", "iges", "igs", "obj", "fbx", "gltf", "glb", "3mf"];
                             let type = 1
-                            if (twoD.includes(twoDext)){
+                            if (twoD.includes(ext)){
                                 type = 1
                             }
-                            else{
-                                type = 3
-                            }
-                            await CostingPartDocumentsService.Create({
-                                Entity:{
-                                    CostingPartId:response.EntityId,
-                                    FileDirectory:th.form.TwoDFileName.value.Filename,
-                                    FileName:th.form.TwoDFileName.value.OriginalName,
-                                    Type: type
-                                }
-                            })
-                        }
-                        if(th.form.ThreeDFileName.value != null){
-                            const threeDext = th.form.ThreeDFileName.value.OriginalName.split('.').pop().toLowerCase();
-                            const threeD = ["stl", "step", "stp", "iges", "igs", "obj", "fbx", "gltf", "glb", "3mf"];
-                            let type = 2
-                            if (threeD.includes(threeDext)){
+                            if (threeD.includes(ext)) {
                                 type = 2
                             }
-                            else{
+
+                            if (["dwg", "dxf"].includes(ext)){
                                 type = 3
-                            }
-                            await CostingPartDocumentsService.Create({
+                            } 
+                             await CostingPartDocumentsService.Create({
                                 Entity:{
                                     CostingPartId:response.EntityId,
-                                    FileDirectory:th.form.ThreeDFileName.value.Filename,
-                                    FileName:th.form.ThreeDFileName.value.OriginalName,
+                                    FileDirectory:files[i].Filename,
+                                    FileName:files[i].OriginalName,
                                     Type: type
                                 }
                             })
                         }
-                        
-                       
                         let data = {
                             Message : response.EntityId.toString(),
                         }
@@ -112,8 +89,6 @@ export class DrawingImportDialog extends PropertyDialog<any, any> {
                             }
                         );
                         notifySuccess("The drawings have been uploaded.")
-                        th.element.trigger('dialogclose');
-
                         th.dialogClose()
                     })
                     
@@ -125,8 +100,5 @@ export class DrawingImportDialog extends PropertyDialog<any, any> {
                 click: () => this.dialogClose()
             }
         ];
-    }
-    protected onDialogClose(result?: string) {
-        super.onDialogClose(result);
     }
 }

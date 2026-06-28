@@ -5,22 +5,17 @@ using System;
 using System.ComponentModel;
 using DSRFQ.Company;
 using DSRFQ.Master;
-using DSRFQ.Modules.Common.Permissions;
 using DSRFQ.Web.Modules;
 
 namespace DSRFQ.Machines;
 
 [ConnectionKey("Default"), Module("Machines"), TableName("Machines")]
 [DisplayName("Machines"), InstanceName("Machines")]
-// [ReadPermission(MasterPermissionKeys.MasterMachineView)]
-// [InsertPermission(MasterPermissionKeys.MasterMachineInsert)]
-// [UpdatePermission(MasterPermissionKeys.MasterMachineUpdate)]
-// [DeletePermission(MasterPermissionKeys.MasterMachineDelete)]
 [ReadPermission("?")]
 [InsertPermission("?")]
 [UpdatePermission("?")]
 [DeletePermission("?")]
-[NavigationPermission(MasterPermissionKeys.MasterMachineNavigation)]
+[NavigationPermission("?")]
 
 [ServiceLookupPermission("?")]
 

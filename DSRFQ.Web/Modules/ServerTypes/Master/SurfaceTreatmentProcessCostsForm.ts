@@ -12,6 +12,7 @@ export interface SurfaceTreatmentProcessCostsForm {
     DeleteDate: DateEditor;
     DeleteUserId: IntegerEditor;
     IsActive: IntegerEditor;
+    CurrencyId: IntegerEditor;
 }
 
 export class SurfaceTreatmentProcessCostsForm extends PrefixedContext {
@@ -39,6 +40,7 @@ export class SurfaceTreatmentProcessCostsForm extends PrefixedContext {
             'DeleteDate', w2,
             'DeleteUserId', w0,
             'IsActive', w0,
+            'CurrencyId', w0,
             ]);
         }
     }

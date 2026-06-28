@@ -27,10 +27,10 @@ export abstract class RawMaterialCostsRow {
     static readonly idProperty = 'Id';
     static readonly localTextPrefix = 'Material.RawMaterialCosts';
 
-    static readonly deletePermission = '?';
-    static readonly insertPermission = '?';
-    static readonly readPermission = '?';
-    static readonly updatePermission = '?';
+    static readonly deletePermission = 'Administration:General';
+    static readonly insertPermission = 'Administration:General';
+    static readonly readPermission = 'Administration:General';
+    static readonly updatePermission = 'Administration:General';
 
     static readonly Fields = fieldsProxy<RawMaterialCostsRow>();
 }

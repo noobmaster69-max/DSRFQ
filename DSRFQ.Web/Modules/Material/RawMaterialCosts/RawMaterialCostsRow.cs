@@ -5,18 +5,17 @@ using System;
 using System.ComponentModel;
 using DSRFQ.Company;
 using DSRFQ.Master;
-using DSRFQ.Modules.Common.Permissions;
 using DSRFQ.Web.Modules;
 
 namespace DSRFQ.Material;
 
 [ConnectionKey("Default"), Module("Material"), TableName("MaterialRawMaterialCosts")]
 [DisplayName("Raw Material Costs"), InstanceName("Raw Material Costs")]
-[ReadPermission(MasterPermissionKeys.MasterMaterialView)]
-[InsertPermission(MasterPermissionKeys.MasterMaterialInsert)]
-[UpdatePermission(MasterPermissionKeys.MasterMaterialUpdate)]
-[DeletePermission(MasterPermissionKeys.MasterMaterialDelete)]
-[NavigationPermission(MasterPermissionKeys.MasterMaterialNavigation)]
+[ReadPermission("?")]
+[InsertPermission("?")]
+[UpdatePermission("?")]
+[DeletePermission("?")]
+[NavigationPermission("?")]
 
 [ServiceLookupPermission("?")]
 [LookupScript("MaterialRawMaterialCosts",Permission = "?",LookupType = typeof(MultiCompanyRowLookupScript<>))]

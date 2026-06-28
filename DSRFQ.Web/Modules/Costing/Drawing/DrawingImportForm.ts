@@ -4,12 +4,12 @@ import {
     DecimalEditor,
     PrefixedContext,
     initFormType,
-    MultipleFileUploadEditor, FileUploadEditor
+    MultipleFileUploadEditor
 } from "@serenity-is/corelib";
 
 export interface DrawingImportForm {
-    TwoDFileName: FileUploadEditor;
-    ThreeDFileName:FileUploadEditor
+    FileName: MultipleFileUploadEditor;
+   
 }
 
 export class DrawingImportForm extends PrefixedContext {
@@ -22,11 +22,11 @@ export class DrawingImportForm extends PrefixedContext {
         if (!DrawingImportForm.init)  {
             DrawingImportForm.init = true;
 
-            var w0 = FileUploadEditor;
-            var w1 = FileUploadEditor
+            var w0 = MultipleFileUploadEditor;
+          
 
             initFormType(DrawingImportForm, [
-                'TwoDFileName', w0, 'ThreeDFileName',w1
+                'FileName', w0,
                 
             ]);
         }

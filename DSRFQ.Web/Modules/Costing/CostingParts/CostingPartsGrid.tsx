@@ -5,7 +5,6 @@ import {DrawingImportDialog} from "../Drawing/DrawingImportDialog";
 import {Column, GridOptions} from "@serenity-is/sleekgrid";
 import {CostingResultDialog} from "./CostingResultDialog";
 import mqtt from "mqtt"
-import * as signalR from "@microsoft/signalr";
 
 @Decorators.registerClass('DSRFQ.Costing.CostingPartsGrid')
 export class CostingPartsGrid extends EntityGrid<CostingPartsRow> {
@@ -24,67 +23,32 @@ export class CostingPartsGrid extends EntityGrid<CostingPartsRow> {
         let th = this
         let i = 0
         const QUEUE_NAME = 'NewCostingParts';
-        const connection = new signalR.HubConnectionBuilder()
-            .withUrl("/chatHub")
-            .build();
-
-        connection.on("ChangeInStatus", (data) => {
-            console.log("ChangeInStatus", data);
-            
-            th.refresh()
-        });
-        connection.on("ChangeInMessage", (data) => {
-            console.log("ChangeInMessage", data);
-            let id = data.Id
-            let receivedMsg =  data.Message;
+        const client = mqtt.connect("ws://localhost:15675/ws",{
+            username:"guest",
+            password:"guest",
+        })
+        
+        client.on("connect", () => {
+            console.log("Connected to RabbitMQ Web Mqtt")
+            client.subscribe("Progress",err=>{
+                if(!err){
+                    console.log("Subscribed to Progress")
+                }
+            })
+        })
+        
+        client.on("message", (topic,message) => {
+            const msg = JSON.parse(message.toString());
+            let id = msg["Id"]
+            let receivedMsg = msg["Message"]
             th.view.setItems(th.view.getFilteredItems().map(item => {
                 if(item.Id===Number(id)){
                     item.Message = receivedMsg;
-
+                    
                 }
                 return item
             }))
-
-        });
-        connection.start().catch(err => console.error(err));
-        // const client = mqtt.connect("ws://localhost:15675/ws",{
-        //     username:"guest",
-        //     password:"guest",
-        // })
-        //
-        // client.on("connect", () => {
-        //     console.log("Connected to RabbitMQ Web Mqtt")
-        //     client.subscribe("Progress",err=>{
-        //         if(!err){
-        //             console.log("Subscribed to Progress")
-        //         }
-        //     })
-        //     client.subscribe("Status",err=>{
-        //         if(!err){
-        //             console.log("Subscribed to Progress")
-        //         }
-        //     })
-        // })
-        //
-        // client.on("message", (topic,message) => {
-        //     const msg = JSON.parse(message.toString());
-        //     if(topic=="Progress"){
-        //         let id = msg["Id"]
-        //         let receivedMsg = msg["Message"]
-        //         th.view.setItems(th.view.getFilteredItems().map(item => {
-        //             if(item.Id===Number(id)){
-        //                 item.Message = receivedMsg;
-        //
-        //             }
-        //             return item
-        //         }))
-        //     }
-        //     else if(topic=="Status"){
-        //         th.refresh()
-        //     }
-        //    
-        //    
-        // })
+        })
         // setInterval(()=>{
         //    
         //     console.log(i+1)
@@ -100,7 +64,7 @@ export class CostingPartsGrid extends EntityGrid<CostingPartsRow> {
     }
 
     protected getButtons(): ToolButton[] {
-        let grid = this
+
         var buttons = super.getButtons();
         buttons.splice(indexOf(buttons, x => x.cssClass == "add-button"), 1);
         buttons.push({
@@ -111,10 +75,9 @@ export class CostingPartsGrid extends EntityGrid<CostingPartsRow> {
 
                 var dialog = new DrawingImportDialog();
                 dialog.element.on('dialogclose', () => {
-                    grid.refresh();
+                    this.refresh();
                     dialog = null;
                 });
-                
                 dialog.dialogOpen();
             }
         });
@@ -178,6 +141,16 @@ export class CostingPartsGrid extends EntityGrid<CostingPartsRow> {
             width:150,
             minWidth:150
         })
+        columns.splice(2, 0,{
+            field: "Prerequisite",
+            name: '',
+            format: ctx => {
+                return  `<a class="inline-action mastercam-button" title="BOM" href="mastercam:C:\\e170128771_asm.mcam" ><i class="fa fa-sitemap text-orange"></i></a>`
+            },
+            width: 20,
+            minWidth: 20,
+            maxWidth: 20
+            });
         
         return columns
     }
@@ -194,7 +167,11 @@ export class CostingPartsGrid extends EntityGrid<CostingPartsRow> {
         let item = this.itemAt(row);
         if (target.classList.contains("inline-action")) {
             e.preventDefault();
+            if (target.classList.contains("mastercam-button")) {
 
+                window.location.href = "mastercam:///C:/e170128771_asm.mcam";
+
+            }
             if (target.classList.contains("view-result-button")) {
                 let dlg = new CostingResultDialog(item.Id)
                 dlg.dialogOpen()
