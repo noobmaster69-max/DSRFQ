@@ -10,6 +10,8 @@ export interface CostingPartsRow {
     Height?: number;
     DimensionUnitId?: number;
     PartPicture?: string;
+    ProcessingMode?: string;
+    RequestedStages?: string;
     MaterialId?: number;
     MaterialTemperId?: number;
     GrossVolume?: number;
@@ -20,6 +22,8 @@ export interface CostingPartsRow {
     WeightUnitId?: number;
     NumberOfFace?: number;
     NumberOfHole?: number;
+    ProcessRecommendations?: string;
+    QualityControlNotes?: string;
     InsertDate?: string;
     InsertUserId?: number;
     UpdateDate?: string;

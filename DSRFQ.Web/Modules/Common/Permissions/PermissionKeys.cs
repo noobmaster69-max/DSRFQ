@@ -70,6 +70,18 @@ public class MasterPermissionKeys
     [Description("Navigation")]
     public const string MasterMaterialNavigation = "Master:Material:Navigation";
     
+    //Tool Template (drawing conversion templates)
+    [Description("Insert")]
+    public const string MasterToolTemplateInsert = "Master:Tool Template:Insert";
+    [Description("Update")]
+    public const string MasterToolTemplateUpdate = "Master:Tool Template:Update";
+    [Description("Delete")]
+    public const string MasterToolTemplateDelete = "Master:Tool Template:Delete";
+    [Description("View")]
+    public const string MasterToolTemplateView = "Master:Tool Template:View";
+    [Description("Navigation")]
+    public const string MasterToolTemplateNavigation = "Master:Tool Template:Navigation";
+
     //Dimension Unit
     [Description("Insert")]
     public const string MasterDimensionUnitInsert = "Master:Dimension Unit:Insert";

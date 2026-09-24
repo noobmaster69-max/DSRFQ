@@ -94,6 +94,12 @@ public sealed class MachinesRow : LoggingRow<MachinesRow.RowFields>, IIdRow, INa
         get => fields.GroupName[this];
         set => fields.GroupName[this] = value;
     }
+    [DisplayName("Picture"),Column("Picture"),ImageUploadEditor]
+    public string Picture
+    {
+        get => fields.Picture[this];
+        set => fields.Picture[this] = value;
+    }
     public Int32Field CompanyIdField { get => Fields.CompanyId; }
     public Int32Field GroupIdField { get => Fields.GroupId; }
 
@@ -116,6 +122,6 @@ public sealed class MachinesRow : LoggingRow<MachinesRow.RowFields>, IIdRow, INa
         public StringField CompanyName;
         public Int32Field GroupId;
         public StringField GroupName;        
-
+        public StringField Picture;
     }
 }

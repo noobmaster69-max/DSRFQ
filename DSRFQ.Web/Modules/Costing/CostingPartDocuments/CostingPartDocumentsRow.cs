@@ -26,7 +26,12 @@ public sealed class CostingPartDocumentsRow : LoggingRow<CostingPartDocumentsRow
 
     [DisplayName("File Directory"), QuickSearch, FileUploadEditor(FilenameFormat = "Drawing/|CostingPartId|/{4}")]
     public string FileDirectory { get => fields.FileDirectory[this]; set => fields.FileDirectory[this] = value; }
-    [DisplayName("Converted File Directory"), QuickSearch]
+    // FileUploadEditor is here for its behaviour, not its editor: without it a
+    // value still pointing at temporary storage is never copied to permanent
+    // storage and gets swept. The 3D viewer writes a browser-converted glb here.
+    // Values written outside Serenity (the Python conversion pipeline) are not
+    // temporary paths, so the behaviour leaves them untouched.
+    [DisplayName("Converted File Directory"), QuickSearch, FileUploadEditor(FilenameFormat = "Drawing/|CostingPartId|/{4}")]
     public string ConvertedFileDirectory { get => fields.ConvertedFileDirectory[this]; set => fields.ConvertedFileDirectory[this] = value; }
 
     [DisplayName("File Name"),NameProperty]

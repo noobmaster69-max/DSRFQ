@@ -1,0 +1,59 @@
+{
+  "generated": "2026-08-18 20:56:03",
+  "backends": [
+    {
+      "backend": "aihubmix (remote)",
+      "model": "gemini-2.5-flash-lite",
+      "workloads": {
+        "is_process": {
+          "calls": 5,
+          "median_s": 3.92,
+          "total_s": 19.1,
+          "sample": "```"
+        },
+        "extract": {
+          "calls": 3,
+          "median_s": 2.65,
+          "total_s": 7.5,
+          "sample": "```json {\""
+        }
+      }
+    },
+    {
+      "backend": "ollama (local)",
+      "model": "gemma3:4b",
+      "workloads": {
+        "is_process": {
+          "calls": 5,
+          "median_s": 2.82,
+          "total_s": 14.1,
+          "sample": "{\"is_process\": true}"
+        },
+        "extract": {
+          "calls": 3,
+          "median_s": 3.05,
+          "total_s": 9.1,
+          "sample": "```json {\"process\": \"CLEAN\", \"spec\": \"O250-29357, TYPE I\"} `"
+        }
+      }
+    },
+    {
+      "backend": "ollama (local)",
+      "model": "gemma3:12b",
+      "workloads": {
+        "is_process": {
+          "calls": 5,
+          "median_s": 4.34,
+          "total_s": 21.8,
+          "sample": "{\"is_process\": true}"
+        },
+        "extract": {
+          "calls": 3,
+          "median_s": 7.23,
+          "total_s": 21.6,
+          "sample": "```json {\"process\": \"CLEAN\", \"spec\": \"O250-29357, TYPE I\"} `"
+        }
+      }
+    }
+  ]
+}

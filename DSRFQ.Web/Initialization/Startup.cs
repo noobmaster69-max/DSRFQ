@@ -32,6 +32,7 @@ public partial class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddExceptionLogger(Configuration.GetDataConnectionString("Default"));
+        DSRFQ.Modules.Common.General.RabbitMqConnection.Configure(Configuration);
         services.AddApplicationPartsFeatureToggles(Configuration);
         services.AddApplicationPartsTypeSource();
         services.ConfigureSections(Configuration);
@@ -92,6 +93,11 @@ public partial class Startup
             loggingBuilder.AddConsole();
             loggingBuilder.AddDebug();
         });
+
+        // Probes the services behind Drawing / Costing / Ballooning every 10 s,
+        // for the upload dialog and the Service Status page.
+        services.AddSingleton<DSRFQ.Costing.ServiceHealthMonitor>();
+        services.AddHostedService(sp => sp.GetRequiredService<DSRFQ.Costing.ServiceHealthMonitor>());
 
         services.AddSingleton<IBackgroundJobManager, BackgroundJobManager>();
         services.AddSingleton<IDataMigrations, AppServices.DataMigrations>();

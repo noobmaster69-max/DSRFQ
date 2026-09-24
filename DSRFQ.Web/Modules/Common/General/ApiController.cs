@@ -1,4 +1,4 @@
-using System.Data;
+﻿using System.Data;
 using DSRFQ.Administration;
 using DSRFQ.Company;
 using System.Collections.Generic;
@@ -226,35 +226,88 @@ public class ApiController : ServiceEndpoint
     {
         public string Message { get; set; }
     }
+    /// <remarks>
+    /// The part is queued before the message is published, so it appears on the
+    /// Processing Queue page the moment the upload dialog closes -- including
+    /// when the consumer is down and nothing will pick the message up. Uploading
+    /// ten drawings therefore produces ten queued jobs that run one at a time
+    /// rather than ten conversions at once, which is what used to exhaust the
+    /// box's memory.
+    /// </remarks>
     [HttpPost,Route("/UploadDrawing")]
-    public IActionResult SendMessage([FromBody] MessageModel message)
+    public IActionResult SendMessage(IUnitOfWork uow, [FromBody] MessageModel message)
     {
-        var factory = new ConnectionFactory() { HostName = "localhost" }; 
+        // 127.0.0.1, not "localhost" - see RabbitMqConnection.
+        var factory = RabbitMqConnection.Factory();
         Console.WriteLine($" Received '{message}'");
+
+        // Only the stages the uploader ticked. The first one they asked for is
+        // what gets queued; the consumer hands on from there and skips the rest
+        // by reading the same list. Null (anything created outside the upload
+        // dialog) means all three, which is what this always used to do.
+        var queue = "NewCostingParts";
+        if (int.TryParse(message?.Message, NumberStyles.Integer,
+                CultureInfo.InvariantCulture, out var costingPartId))
+        {
+            var fld = DSRFQ.Costing.CostingPartsRow.Fields;
+            var part = uow.Connection.TryById<DSRFQ.Costing.CostingPartsRow>(costingPartId);
+            var requested = (part?.RequestedStages ?? "").Trim();
+            var stages = requested.Length == 0
+                ? new[] { "drawing", "costing", "ballooning" }
+                : requested.ToLowerInvariant().Split(',', StringSplitOptions.RemoveEmptyEntries |
+                                                          StringSplitOptions.TrimEntries);
+
+            bool Wants(string stage) => Array.IndexOf(stages, stage) >= 0;
+
+            // A stage nobody asked for is marked Skipped rather than left
+            // Pending: the grid should not show work that will never start, and
+            // the consumer's own "is this stage still outstanding" checks read
+            // these columns too.
+            var skipped = new List<Field>();
+            if (!Wants("drawing")) { skipped.Add(fld.DrawingConversionStatusId); skipped.Add(fld.OcrStatusId); }
+            if (!Wants("costing")) skipped.Add(fld.CostingStatusId);
+            if (!Wants("ballooning")) skipped.Add(fld.BalloonStatusId);
+            if (skipped.Count > 0)
+            {
+                var update = new SqlUpdate(fld.TableName).Where(fld.Id == costingPartId);
+                foreach (var f in skipped)
+                    update.Set(f, StageSkipped);
+                update.Execute(uow.Connection);
+            }
+
+            queue = Wants("drawing") ? "NewCostingParts"
+                  : Wants("costing") ? "Costing"
+                  : Wants("ballooning") ? "Ballooning"
+                  : null;
+
+            if (queue == null)
+                return Ok(" [x] Nothing to run - no stage was selected");
+
+            DSRFQ.Costing.CostingQueue.Enqueue(uow.Connection, costingPartId, queue);
+        }
+
         using (var connection = factory.CreateConnection())
         using (var channel = connection.CreateModel())
         {
-            channel.ExchangeDeclare(exchange: "costing_part_exchange", type: ExchangeType.Direct);
-
-            // 3. Declare a queue for our messages
-            channel.QueueDeclare(queue: "NewCostingParts",
+            // Straight to the queue the consumer listens on (the default
+            // exchange routes by queue name), as the Re-run button does. The
+            // costing_part_exchange binding only ever carried NewCostingParts,
+            // so it cannot reach the other two.
+            channel.QueueDeclare(queue: queue,
                 durable: true,
                 exclusive: false,
                 autoDelete: false,
                 arguments: null);
 
-            // 4. Bind the queue to the exchange with a routing key
-            channel.QueueBind(queue: "NewCostingParts",
-                exchange: "costing_part_exchange",
-                routingKey: "new_costing_part_key");
-
-            // 5. Publish the message
             var body = Encoding.UTF8.GetBytes(message.Message);
-            channel.BasicPublish(exchange: "costing_part_exchange",
-                routingKey: "new_costing_part_key",
+            channel.BasicPublish(exchange: "",
+                routingKey: queue,
                 basicProperties: null,
                 body: body);
-            return Ok($" [x] Sent '{message.Message}'");
+            return Ok($" [x] Sent '{message.Message}' to {queue}");
         }
     }
+
+    /// <summary>MasterCostingStatus "Skipped" - the stage was not asked for.</summary>
+    private const int StageSkipped = 7;
 }

@@ -10,6 +10,11 @@
   <ItemGroup>
     <TypeScriptCompile Remove="node_modules\**" />
     <EmbeddedResource Include="Migrations\**\*.sql" />
+    <!-- The check sheet Excel templates (from DSEFACTORY's QcTemplates). Remove
+         then Include, so this works whether or not the SDK already globbed them
+         in as Content, without a duplicate-item error either way. -->
+    <Content Remove="App_Data\QcTemplates\*.xlsx" />
+    <Content Include="App_Data\QcTemplates\*.xlsx" CopyToOutputDirectory="Never" CopyToPublishDirectory="PreserveNewest" />
     <Content Update=".eslintrc.json;libman.json;package*.json;sergen.json;ts*.json;App_Data\chrome\**" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
     <Using Include="Serenity.Extensions;Serenity.Pro.Extensions" />
     <TypeScriptCompile Remove="Modules\Company\Billing\App.tsx" />
@@ -18,6 +23,7 @@
     <TypeScriptCompile Remove="Modules\Costing\CostingParts\RequestHandlers\CostingResultDialog.tsx" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="EPPlus" Version="4.5.3.3" />
     <PackageReference Include="FluentMigrator.Runner" Version="6.2.0" />
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.8.2" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="7.0.20" />

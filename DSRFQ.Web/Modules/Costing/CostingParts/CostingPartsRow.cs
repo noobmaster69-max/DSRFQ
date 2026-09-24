@@ -55,6 +55,59 @@ public sealed class CostingPartsRow : LoggingRow<CostingPartsRow.RowFields>, IId
     [DisplayName("Part Picture")]
     public string PartPicture { get => fields.PartPicture[this]; set => fields.PartPicture[this] = value; }
 
+    // ---- Which machine the costing was priced on ---------------------------
+    //
+    // Written by the RFQ consumer from new_tsh's response. The rate that sets
+    // the price comes from fa_supplier_equipment in new_tsh's MySQL, which this
+    // application cannot reach, so the name is resolved there and stored here
+    // rather than joined. See DefaultDB_20260820_1600_CostingMachine.
+
+    [DisplayName("Machine"), Size(300)]
+    public string CostingMachineName
+    {
+        get => fields.CostingMachineName[this];
+        set => fields.CostingMachineName[this] = value;
+    }
+
+    [DisplayName("Machine Id"), Column("CostingMachineID")]
+    public int? CostingMachineId
+    {
+        get => fields.CostingMachineId[this];
+        set => fields.CostingMachineId[this] = value;
+    }
+
+    /// <summary>The lathe, for turn-mill parts. Null when one machine did the job.</summary>
+    [DisplayName("Machine Id 2"), Column("CostingMachineID2")]
+    public int? CostingMachineId2
+    {
+        get => fields.CostingMachineId2[this];
+        set => fields.CostingMachineId2[this] = value;
+    }
+
+    [DisplayName("Machine Supplier Id"), Column("CostingMachineSupplierID")]
+    public int? CostingMachineSupplierId
+    {
+        get => fields.CostingMachineSupplierId[this];
+        set => fields.CostingMachineSupplierId[this] = value;
+    }
+
+    /// <summary>
+    /// How the RFQ consumer should run this part's recognition stages:
+    /// "serial", "parallel", or null to use the consumer's configured default.
+    /// Chosen per upload because the right answer depends on the drawing and on
+    /// what else is running.
+    /// </summary>
+    [DisplayName("Processing Mode"), Size(20)]
+    public string ProcessingMode { get => fields.ProcessingMode[this]; set => fields.ProcessingMode[this] = value; }
+
+    /// <summary>
+    /// The stages the uploader asked for: any of "drawing", "costing",
+    /// "ballooning", comma separated. Null means all of them, which is what
+    /// every part created before the choice existed carries.
+    /// </summary>
+    [DisplayName("Requested Stages"), Size(100)]
+    public string RequestedStages { get => fields.RequestedStages[this]; set => fields.RequestedStages[this] = value; }
+
     [DisplayName("Material Id"), Column("MaterialID")]
     public int? MaterialId { get => fields.MaterialId[this]; set => fields.MaterialId[this] = value; }
 
@@ -86,6 +139,17 @@ public sealed class CostingPartsRow : LoggingRow<CostingPartsRow.RowFields>, IId
 
     [DisplayName("Number Of Hole")]
     public int? NumberOfHole { get => fields.NumberOfHole[this]; set => fields.NumberOfHole[this] = value; }
+
+    /// <summary>
+    /// What new_tsh's process analysis said about preparing this part.
+    /// One line per recommendation; null when the analysis had nothing to say.
+    /// </summary>
+    [DisplayName("Process Recommendations")]
+    public string ProcessRecommendations { get => fields.ProcessRecommendations[this]; set => fields.ProcessRecommendations[this] = value; }
+
+    /// <summary>What it said to check once the part is machined.</summary>
+    [DisplayName("Quality Control Notes")]
+    public string QualityControlNotes { get => fields.QualityControlNotes[this]; set => fields.QualityControlNotes[this] = value; }
 
     [DisplayName("Costing Part Document View"),Expression($"T0.ID"),ForeignKey("CostingPartDocumentView","CostingPartID"),LeftJoin(jCostingPartDocumentView)]
     public int? CostingPartDocumentView
@@ -272,6 +336,12 @@ public sealed class CostingPartsRow : LoggingRow<CostingPartsRow.RowFields>, IId
         public DecimalField Height;
         public Int32Field DimensionUnitId;
         public StringField PartPicture;
+        public StringField CostingMachineName;
+        public Int32Field CostingMachineId;
+        public Int32Field CostingMachineId2;
+        public Int32Field CostingMachineSupplierId;
+        public StringField ProcessingMode;
+        public StringField RequestedStages;
         public Int32Field MaterialId;
         public Int32Field MaterialTemperId;
         public DecimalField GrossVolume;
@@ -286,6 +356,8 @@ public sealed class CostingPartsRow : LoggingRow<CostingPartsRow.RowFields>, IId
         public StringField WeightUnitCode;
         public Int32Field NumberOfFace;
         public Int32Field NumberOfHole;
+        public StringField ProcessRecommendations;
+        public StringField QualityControlNotes;
         
         public Int32Field CostingPartDocumentView;
         public StringField DocumentList;

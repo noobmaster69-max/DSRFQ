@@ -1,0 +1,168 @@
+# Service registry for the Aizera control panel.
+#
+# Each entry describes how to check a service and, where we own its lifecycle,
+# how to start it. Add a service by adding a block here — no code change needed.
+#
+#   check:  http  -> GET `url`, healthy on any status < 500 (a 401/302 still
+#                    proves the server is listening and answering)
+#           tcp   -> open a socket to host:port
+#           proc  -> healthy while the process we started is alive (for workers
+#                    that expose no port, like the RabbitMQ consumer)
+#   start:  omit entirely for services this panel must not launch — they show
+#           as "external" and are monitored only.
+
+python: &python C:\Aizera\RPA\PythonLibrary\.venv\Scripts\python.exe
+
+# Same interpreter without the console. Only for the PyQt desktop app: python.exe
+# would put an empty black window beside it for the life of the session.
+pythonw: &pythonw C:\Aizera\RPA\PythonLibrary\.venv\Scripts\pythonw.exe
+
+groups:
+  - name: Application
+    services:
+      - id: oneZera
+        name: OneZera Web
+        detail: Serenity ERP — costing workspace, ballooning, 3D
+        check: http
+        # /Costing/CostingParts is DSRFQ-specific; /Account/Login is not,
+        # and DSEFACTORY on 5000 answers it identically.
+        url: http://localhost:5001/Costing/CostingParts
+        port: 5001
+        cwd: C:\Aizera\DSRFQ\DSRFQ.Web
+        command: [dotnet, bin/Debug/net8.0/DSRFQ.Web.dll]
+        env:
+          # The app targets net8.0 and this box has only .NET 6 and 10.
+          DOTNET_ROLL_FORWARD: Major
+          ASPNETCORE_ENVIRONMENT: Development
+          ASPNETCORE_URLS: http://0.0.0.0:5001
+        open: http://localhost:5001
+
+      
+  - name: Recognition
+    services:
+      - id: table-recognize
+        name: Table Recognize
+        detail: PaddleOCR table + icon + text detection
+        check: http
+        url: http://localhost:3600/docs
+        port: 3600
+        cwd: C:\Aizera\RPA\table-recognize-3parts
+        command: [*python, api.py]
+        open: http://localhost:3600/docs
+        # Measured 40-45s to bind warm; the first start after a reboot, or one
+        # racing the other services for disk, runs past 90s. 60 was tight
+        # enough that the supervisor kept writing it off mid-boot.
+        slow_start: 120
+
+      - id: replace-api
+        name: REPLACE API v2
+        detail: Title-block replacement / global OCR
+        check: http
+        url: http://localhost:3500/docs
+        port: 3500
+        cwd: C:\Aizera\RPA\REPLACE-api-v2\REPLACE-api-v2
+        command: [*python, api.py]
+        open: http://localhost:3500/docs
+        slow_start: 120         # same PaddleOCR startup cost as 3600
+
+      - id: table-to-json
+        name: Table to JSON
+        detail: Title-block table -> structured JSON (RFQ's NewCostingPartFast)
+        check: http
+        url: http://localhost:3501/docs
+        port: 3501
+        cwd: C:\Aizera\RPA\table-to-json
+        command: [*python, main.py]
+        open: http://localhost:3501/docs
+        # Loads a PicoDet layout model on startup before it binds.
+        slow_start: 120
+
+      
+
+      - id: bubble-new
+        name: Ballooning Model
+        detail: Grid · OCR · tolerance · notes · BOM — /process_document overall|area|single
+        check: http
+        # FastAPI, so /docs proves the app is answering and not merely that the
+        # socket is open. tcp would go green while the worker was still loading.
+        url: http://localhost:5999/docs
+        port: 5999
+        # The packaged build, which is what actually runs here - it carries the
+        # licence and the encrypted ONNX models. The source checkout at
+        # RPA\Bubble\tsh-new has neither, and only starts through its own
+        # run_local.py shim, so it is not what this panel should launch.
+        cwd: C:\Aizera\Bubble\Bubble-V6
+        command: [C:\Aizera\Bubble\Bubble-V6\Bubble.exe]
+        open: http://localhost:5999/docs
+        # It must have a console of its own, or it dies during startup with
+        # UnicodeEncodeError out of vert.initialize_license: the build ignores
+        # PYTHONIOENCODING/PYTHONUTF8, so with no console Python encodes its
+        # stdout as cp1252 and the first Chinese line it prints is fatal.
+        # Verified: dies redirected, dies to DEVNULL, dies with both env vars,
+        # starts every time with a console. Its output goes to that window
+        # rather than this panel's log - the two are mutually exclusive.
+        console: true
+        # It loads every detection and recognition model and spawns its worker
+        # before uvicorn binds; its own docs say to wait for "可开始使用" on the
+        # console. Same order as the PaddleOCR services above, with headroom.
+        slow_start: 180
+
+     
+  - name: Middleware
+    services:
+      - id: rpa-api
+        name: RPA API
+        detail: FastAPI middleware — ballooning, sourcing, drawing conversion
+        check: http
+        url: http://localhost:8000/health
+        port: 8000
+        cwd: C:\Aizera\RPA\API
+        command: [*python, api.py]
+        open: http://localhost:8000/docs
+
+      - id: new-tsh
+        name: costing
+        detail: Flask quotation/CAM API
+        check: http
+        url: http://localhost:8888/health
+        port: 8888
+        cwd: C:\Aizera\RPA\new_tsh
+        command: [*python, api.py]
+        open: http://localhost:8888/health
+
+      - id: rfq-consumer
+        name: RFQ Consumer
+        detail: Drains NewCostingParts and drives the conversion pipeline
+        check: proc
+        cwd: C:\Aizera\RPA\RFQ
+        command: [*python, rabbitMQ.py]
+
+  - name: Infrastructure
+    services:
+      - id: rabbitmq
+        name: RabbitMQ
+        detail: AMQP 5672 · management 15672 · web-mqtt 15675
+        check: http
+        url: http://localhost:15672
+        port: 5672
+        cwd: C:\Aizera\DSRFQ
+        command: [docker, compose, -f, docker-compose.rabbitmq.yml, up, -d]
+        stop_command: [docker, compose, -f, docker-compose.rabbitmq.yml, stop]
+        detached: true          # compose returns immediately; container lives on
+        open: http://localhost:15672
+
+      - id: mysql
+        name: MySQL
+        detail: tsh_new schema for new_tsh
+        check: tcp
+        host: 127.0.0.1
+        port: 3307
+        external: true
+
+      - id: sqlserver
+        name: SQL Server
+        detail: RFQ database for DSRFQ
+        check: tcp
+        host: deskdev
+        port: 65001
+        external: true

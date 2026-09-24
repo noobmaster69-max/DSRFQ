@@ -1,0 +1,39 @@
+# RabbitMQ broker for local DSRFQ development.
+#
+#   docker compose -f docker-compose.rabbitmq.yml up -d
+#   docker compose -f docker-compose.rabbitmq.yml logs -f
+#   docker compose -f docker-compose.rabbitmq.yml down
+#
+# Who needs which port:
+#   5672   AMQP  - DSRFQ.Web ApiController /UploadDrawing publishes here, and
+#                  RPA\RFQ\rabbitMQ.py consumes the NewCostingParts queue
+#   15672  HTTP  - management UI, http://localhost:15672 (guest / guest)
+#   15675  WS    - Web MQTT, CostingPartsGrid subscribes to ws://localhost:15675/ws
+#   1883   MQTT  - plain MQTT, not used by the app but enabled with the plugin
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: dsrfq-rabbitmq
+    hostname: dsrfq-rabbitmq          # node name derives from this; keep it
+                                      # stable or the mnesia data dir changes
+                                      # and the volume looks empty on restart
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      - "15675:15675"
+      - "1883:1883"
+    volumes:
+      - ./docker/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./docker/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
+      - dsrfq-rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_running"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 30s
+
+volumes:
+  dsrfq-rabbitmq-data:

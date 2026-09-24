@@ -1,0 +1,63 @@
+{
+ "data": {
+  "data_to_send": {
+   "face": 383,
+   "gross_weight": 70.24,
+   "heat_treatment": "无",
+   "heat_treatment_costs": 0,
+   "height": 124.46,
+   "hole": 138.0,
+   "length": 457.2,
+   "machine": {
+    "machine_name": "MAKINO A61NX-5XR 3-axis 720x650x800",
+    "matched": true,
+    "milling": {
+     "axis": "3",
+     "id": 1,
+     "name": "MAKINO A61NX-5XR 3-axis 720x650x800"
+    },
+    "supplier_id": 2,
+    "turning": null
+   },
+   "material": "Aluminium 6061-T6",
+   "material_costs": 7.0,
+   "milling_finishing": "Milling Finishing",
+   "milling_finishing_equipment_costs_hours": 45.0,
+   "milling_finishing_remark": null,
+   "milling_finishing_time_hours": 9.55,
+   "milling_roughing": "Milling Roughing",
+   "milling_roughing_equipment_costs_hours": 45.0,
+   "milling_roughing_remark": null,
+   "milling_roughing_time_hours": 14.32,
+   "milling_semi_finishing": null,
+   "milling_semi_finishing_equipment_costs_hours": 0,
+   "milling_semi_finishing_remark": null,
+   "milling_semi_finishing_time_hours": 0.0,
+   "net_volume": 6274898.87,
+   "net_weight": 16.94,
+   "number": 1,
+   "quality_control": [
+    "Check critical dimensions after machining completion"
+   ],
+   "remove_volume": 19741203.99,
+   "setup": "Setup & Clamping",
+   "setup_equipment_costs_hours": 45.0,
+   "setup_time_hours": 1.14,
+   "smooth": "ra_08",
+   "specific_recommendations": [
+    "No specific machining preparation recommendations available"
+   ],
+   "surface_treatment": "无",
+   "surface_treatment_costs": 0,
+   "tolerance": "it6",
+   "turning": null,
+   "turning_equipment_costs_hours": 0,
+   "turning_remark": null,
+   "turning_time_hours": 0.0,
+   "volume": 26016102.86,
+   "width": 457.2
+  }
+ },
+ "message": "Process analysis completed",
+ "status": "success"
+}

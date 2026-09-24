@@ -1,0 +1,62 @@
+[
+  {
+    "name": "1. Drawing Library",
+    "start": 4.45,
+    "end": 14.81
+  },
+  {
+    "name": "2. Open the workspace",
+    "start": 14.81,
+    "end": 23.57
+  },
+  {
+    "name": "3. Turn the 3D model",
+    "start": 23.57,
+    "end": 27.63
+  },
+  {
+    "name": "4. Costing lines",
+    "start": 27.63,
+    "end": 34.33
+  },
+  {
+    "name": "4b. Parts list",
+    "start": 34.33,
+    "end": 41.13
+  },
+  {
+    "name": "4c. Special processes",
+    "start": 41.13,
+    "end": 48.39
+  },
+  {
+    "name": "5. Original sheet, title block masked",
+    "start": 48.39,
+    "end": 59.29
+  },
+  {
+    "name": "5b. Converted sheet",
+    "start": 59.29,
+    "end": 67.79
+  },
+  {
+    "name": "6. Balloons",
+    "start": 67.79,
+    "end": 84.35
+  },
+  {
+    "name": "6b. Clear the mask before leaving the drawing",
+    "start": 84.35,
+    "end": 84.87
+  },
+  {
+    "name": "7. File Library search",
+    "start": 84.87,
+    "end": 97.74
+  },
+  {
+    "name": "8. Dashboard",
+    "start": 97.74,
+    "end": 107.22
+  }
+]

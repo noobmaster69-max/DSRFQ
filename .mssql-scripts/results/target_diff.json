@@ -1,0 +1,20 @@
+{
+ "differ": [
+  "C:\\Aizera\\RPA\\API\\Balloon.py",
+  "C:\\Aizera\\RPA\\API\\DrawingConversion.py",
+  "C:\\Aizera\\RPA\\API\\ExtractRectangle.py",
+  "C:\\Aizera\\RPA\\API\\api.py",
+  "C:\\Aizera\\RPA\\RFQ\\config.yaml",
+  "C:\\Aizera\\RPA\\RFQ\\feature_symbols.py",
+  "C:\\Aizera\\RPA\\RFQ\\function.py",
+  "C:\\Aizera\\RPA\\RFQ\\handlers.py",
+  "C:\\Aizera\\RPA\\control-panel\\panel.py",
+  "C:\\Aizera\\RPA\\control-panel\\services.yaml",
+  "C:\\Aizera\\RPA\\new_tsh\\cam2d_engine\\final_solution_generator.py",
+  "C:\\Aizera\\RPA\\new_tsh\\cam2d_engine\\process_analyzer.py",
+  "C:\\Aizera\\RPA\\new_tsh\\cam2d_engine\\shape_analyzer.py"
+ ],
+ "missing": [
+  "C:\\Aizera\\RPA\\RFQ\\view_links.py"
+ ]
+}

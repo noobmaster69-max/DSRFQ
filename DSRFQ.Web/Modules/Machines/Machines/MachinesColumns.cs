@@ -1,7 +1,9 @@
 ﻿using Serenity.ComponentModel;
 using System;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
+using DSRFQ.Common;
 namespace DSRFQ.Machines.Columns;
 
 [ColumnsScript("Machines.Machines")]
@@ -10,6 +12,8 @@ public class MachinesColumns
 {
     [EditLink, DisplayName("Db.Shared.RecordId"), AlignRight,SortOrder(1,true)]
     public long Id { get; set; }
+    [InlineImageFormatter]
+    public string Picture {get;set;}
     [EditLink]
     public string Name { get; set; }
     public string Description { get; set; }

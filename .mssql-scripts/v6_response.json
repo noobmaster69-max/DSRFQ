@@ -1,0 +1,41 @@
+{
+  "start": null,
+  "end": null,
+  "row": null,
+  "col": null,
+  "views": [
+    {
+      "view_id": 1,
+      "core_bbox": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "ocr_results": {
+        "rec_text": [],
+        "rec_scores": [],
+        "rec_polys": [],
+        "type": [],
+        "belong": []
+      }
+    }
+  ],
+  "tolerance": [],
+  "notes": [],
+  "border": [],
+  "bom": [],
+  "bom_scores": [],
+  "table": [
+    [
+      139,
+      688,
+      886,
+      1000
+    ]
+  ],
+  "table_scores": [
+    0.529900848865509
+  ],
+  "table_info": {}
+}

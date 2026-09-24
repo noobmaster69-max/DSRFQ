@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using DSRFQ.Common;
 
 namespace DSRFQ.Costing.Columns;
 
@@ -14,17 +15,25 @@ public class CostingPartsColumns
     [Width(400)]
     public string DocumentList { get; set; }
     public string Message { get; set; }
+    [InlineImageFormatter]
+    public string PartPicture { get; set; }
     public string PartNumber { get; set; }
     public string Revision { get; set; }
     public string Description { get; set; }
    
-    public string PartPicture { get; set; }
+    
     [Width(120)]
    public string OcrStatusName { get; set; }
    [Width(120)]
    public string DrawingConversionStatusName { get; set; }
    [Width(120)]
    public string CostingStatusName { get; set; }
+   // No Machine column here on purpose. A bare machine name in a 200px cell
+   // says less than it seems to -- it cannot show the picture, the axis count
+   // or the work envelope, and a turn-mill part has two machines that one cell
+   // cannot hold. The workspace's Costing tab shows them properly, one card per
+   // machine. CostingParts.CostingMachineName is still written and still
+   // queryable; it is only kept off this grid.
    [Width(120)]
    public string BalloonStatusName { get; set; }
    [DateTimeFormatter(DisplayFormat = "yyyy-MM-dd HH:mm"), Width(120)]

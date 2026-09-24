@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Throwaway harness: calls DSRFQ's own PdfProcessor.RenderPages from the
+       built DSRFQ.Web.dll on real drawings, without uploading anything. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RollForward>Major</RollForward>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.8.2" />
+    <Reference Include="DSRFQ.Web">
+      <HintPath>..\..\DSRFQ.Web\bin\Debug\net8.0\DSRFQ.Web.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+</Project>

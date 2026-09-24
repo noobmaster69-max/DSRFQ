@@ -1,0 +1,25 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1680
+PlayResY: 1050
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Segoe UI,26,&H00FFFFFF,&H000000FF,&HA0101010,&H00000000,0,0,0,0,100,100,0,0,3,6,0,2,60,60,34,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, Effect, Text
+Dialogue: 0,0:00:00.60,0:00:05.20,Default,,0,0,,D S R F Q — automated quoting for machined parts.
+Dialogue: 0,0:00:04.85,0:00:13.88,Default,,0,0,,A customer sends a drawing and a 3D model. Traditionally an estimator reads it\Nand prices it by hand — hours per part.
+Dialogue: 0,0:00:15.21,0:00:22.52,Default,,0,0,,Here the work is already done: conversion, title block reading, costing and\Nballooning.
+Dialogue: 0,0:00:23.97,0:00:28.23,Default,,0,0,,The geometry is measured straight from the STEP file.
+Dialogue: 0,0:00:28.03,0:00:34.95,Default,,0,0,,Then priced: setup, roughing, finishing. Twelve fifty.
+Dialogue: 0,0:00:34.73,0:00:40.33,Default,,0,0,,It reads the parts list off the drawing — nine items, with part numbers.
+Dialogue: 0,0:00:41.53,0:00:48.48,Default,,0,0,,And the special processes: cleaning and silver plating, each with its\Nspecification.
+Dialogue: 0,0:00:48.79,0:00:58.18,Default,,0,0,,This is the customer's original sheet. Their title block is covered here,\Nbecause replacing it is what the next step does.
+Dialogue: 0,0:00:59.69,0:01:08.41,Default,,0,0,,The converted drawing. Same geometry, our title block, notes rewritten to our\Nspecifications.
+Dialogue: 0,0:01:08.19,0:01:21.98,Default,,0,0,,It also balloons the drawing for inspection. A hundred and seventy-two\Nballoons across five pages, each tied to a dimension and its tolerance — the\Nmark-up a quality team would otherwise do by hand.
+Dialogue: 0,0:01:25.27,0:01:34.51,Default,,0,0,,Every file stays searchable by what is inside it — part number, material,\Ncustomer, all read from the drawing itself.
+Dialogue: 0,0:01:38.14,0:01:47.80,Default,,0,0,,And across the system: how long each stage takes, and what failed. Two files\Nin, a costed quote out.

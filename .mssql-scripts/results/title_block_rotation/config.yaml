@@ -1,0 +1,311 @@
+RabbitMq:
+  Host: localhost
+
+InsertUserId: 1
+
+Database:
+  # Must match DSRFQ.Web/appsettings.json - the consumer writes to the same
+  # database the application reads. It previously pointed at SYNERGYAI/DSRFQ,
+  # which does not exist here, so every message failed on connect.
+  Driver: ODBC Driver 17 for SQL Server
+  Server: deskdev,65001
+  Database: RFQ
+  Uid: sa
+  Pwd: Tsh9989
+
+# new_tsh's own MySQL, where fa_area / fa_material / fa_supplier_equipment live.
+#
+# Separate from Database: above, which is DSRFQ's SQL Server. The consumer needs
+# both - it reads the material catalogue from here to pick a material_id, then
+# writes the costing result over there.
+#
+# This used to be hardcoded in _costing_suanfei_body as localhost:3307, so moving
+# the server meant editing Python. Note that MySQL grants are per client host:
+# pointing this at a hostname rather than loopback means the account must be
+# granted for the machine the consumer runs on, or the connection is refused
+# with error 1130 before authentication is even attempted.
+CostingDatabase:
+  Host: deskdev
+  Port: 3307
+  User: joe
+  Password: Welcome01
+  Database: tsh_new
+
+Costing:
+  # Which fa_area row in tsh_new the costing calculation prices against.
+  #
+  # /suanfei_tsh looks up fa_area by this id and then fa_material by
+  # (material_id, area_id); a mismatch returns 404 'Area does not exist' or
+  # 'Specified material information not found'.
+  #
+  # This was hardcoded to 1 in handlers.py, but tsh_new has exactly one area --
+  # id 2, Malaysia -- and no material with id 1, so every calculation 404'd.
+  # Materials do exist for area_id 1 and 3-5, but those areas have no fa_area
+  # row, so only area 2 satisfies both lookups.
+  AreaId: 2
+
+  # /suanfei_tsh queues the process analysis and returns immediately, so
+  # /gongyi_tsh is not ready when the CostingGongyi message arrives -- asking
+  # once returned 404 'Process analysis not started yet' and the part stayed
+  # In Progress forever. These bound the polling that replaced that single call.
+  GongyiPollSeconds: 10
+  GongyiMaxPolls: 60      # 10 minutes
+
+Processing:
+  # How the per-part OCR/conversion stages are run.
+  #
+  #   serial   - one stage at a time; each finishes before the next starts.
+  #              Slower in wall-clock, but a stage can have the machine to
+  #              itself. Use this when memory is the binding constraint.
+  #   parallel - all stages fan out at once (the original behaviour). Fastest
+  #              when there is headroom to hold several drawing-sized jobs.
+  #
+  # Why this defaults to serial here: one part fans out to 3500
+  # (REPLACE-api-v2), 3600 (table-recognize) and 3501 (table-to-json), and each
+  # rasterises the whole PDF and runs Paddle models over it. On this box (15 GB
+  # RAM) three at once exhaust the commit limit and whichever asks for memory
+  # next dies mid-request -- the consumer sees a bare ConnectionResetError
+  # (10054) while the service log ends in "fatal : Memory allocation failure".
+  # Switch to parallel once the Windows page file is raised or on a bigger box.
+  Mode: serial
+
+  # Which recognition services run for a part. Remove one to skip it entirely.
+  #
+  #   title-block  3600 table-recognize   ~8-15s   table + icon + text detection,
+  #                                                title-block -> table_content
+  #   material     3501 table-to-json     ~30-60s  title block -> JSON, used only
+  #                                                to fill Material
+  #   global-ocr   3500 REPLACE-api-v2    ~340-625s  full-page OCR, text
+  #                                                replacement, and the CrewAI
+  #                                                analysis report
+  #
+  # Measured on part 5: global-ocr alone is 40-60x the cost of title-block and
+  # dominates the wall clock, so dropping it takes a part from ~7-10 minutes to
+  # well under a minute -- and removes the memory contention that was starving
+  # SQL Server on this box.
+  #
+  # What you give up by dropping global-ocr: the CrewAI analysis report is the
+  # only source of Uom, Length/Width/Height, special process, critical part and
+  # BOM extraction. title-block still supplies PartNumber, Revision,
+  # Description, Material and CustomerName, and those are what the finaliser
+  # below writes. Add 'global-ocr' back to this list to restore the rest.
+  Stages:
+    - title-block
+
+  # Hand a part to costing as soon as its drawing and OCR finish. The only
+  # other trigger lived inside the "material" stage, so with Stages set to
+  # title-block alone nothing ever queued costing and an uploaded part just
+  # stopped at Completed/Completed with Costing still Pending.
+  AutoCosting: true
+
+  # Carry on into ballooning once costing finishes, completing the chain
+  # upload -> drawing + OCR -> costing -> ballooning. Needs the Bubble engine
+  # on 5998, which is started by hand outside the control panel; if it is down
+  # the part is marked Failed and the Balloon button can retry it.
+  AutoBallooning: true
+
+  # Datum feature symbols - the ▲ marking a surface AS the reference everything
+  # else is measured from, not the "A B C" inside a control frame citing one.
+  #
+  # RPA/API finds these by geometry: a filled triangle joined by a leader to a
+  # boxed capital, all in OpenCV. That is the only way to tell the two apart,
+  # because on text alone both are a boxed capital letter - and it still finds
+  # the datum on drawings where recognition dropped the triangle entirely.
+  #
+  # THESE ARE THE FALLBACK VALUES. The settings the consumer actually uses live
+  # in dbo.MasterSettings, edited at Master > Drawing > Ballooning Settings, so
+  # that the ballooning widget and this consumer read the same answer and so
+  # that changing one does not mean restarting this process mid-queue. What is
+  # below is used only when that table cannot be read - which is the case on an
+  # install that deploys this consumer before the migration has run.
+  Datums:
+    # There is no switch for "use geometry". RPA/API runs the OpenCV pass on
+    # every ballooning upload whatever this file says, so declining to read the
+    # result would cost exactly the same and leave every balloon on the symbol
+    # test - which cannot tell a datum from a control frame citing one. The
+    # symbol test remains as the automatic fallback for balloons no geometric
+    # datum was matched to, which is the only job it is fit for.
+
+    # Add a balloon for a datum that no recognised text covered. This is the
+    # half that CREATES rows rather than setting a flag on rows that already
+    # exist, so it gets its own switch: a false positive here puts a line in
+    # the inspection report that is not on the drawing.
+    #
+    # Turn this off and Enabled on to get the better classification of what
+    # was already found, with nothing new added.
+    AddMissing: true
+
+    # A confidence floor for the added rows only, on top of the API's own
+    # threshold of 0.5 (which it applies to both halves). 0 defers to the API,
+    # which is the default; 0.8 would add only the datums that had a traced
+    # leader AND a readable letter.
+    AddMinConfidence: 0.0
+
+  # Reading the parts list off a plain 2D drawing, for the drawings that carry
+  # no Anark entity map (mbd.py handles those, from structured data, for free).
+  #
+  # Measured on part 12: locating the table from the text layer is 21 ms and
+  # rejects a drawing with no parts list outright, so the vision call only runs
+  # where there is something to read. That call is 17-27s, which is why this
+  # goes through the 'bom' queue lane rather than the drawing stage.
+  #
+  # Each page is routed on its own: a page with a text layer is located that
+  # way, a page without one - scanned, or text drawn as vector outlines - is
+  # located by the table's own printed rules, and a page that yields nothing
+  # either way is OCR'd and retried. No setting turns the rules path off; a
+  # page with no text layer used to be skipped outright, and skipping is what
+  # this replaced.
+  BomOcr:
+    Enabled: true
+    Model: "qwen2.5vl:7b"
+    OllamaUrl: "http://localhost:11434"
+    TimeoutSeconds: 600
+    Retries: 3
+    RetryWaitSeconds: 3
+    Dpi: 400
+    MaxEdge: 1600
+
+    # The rules path renders the whole page, so it does not need the text
+    # path's 400 dpi - 300 is enough for the morphology and a third cheaper.
+    RulesDpi: 300
+    # Candidate ruled regions read per page, largest first. Anything past this
+    # is logged, never dropped silently.
+    MaxRuleRegions: 8
+    # ...and per document. The rules path is speculative - it sends crops that
+    # MIGHT be a parts list - so without a ceiling a scanned 5-page drawing
+    # could queue 40 vision calls, 13 minutes in the bom lane.
+    MaxRuleVisionCalls: 12
+
+    # If nothing on a text-less page is ruled (an unruled parts list on a scan),
+    # OCR the page and retry the text path against the OCR'd words. Needs
+    # Tesseract; without it the page is simply skipped.
+    OcrLastResort: true
+    OcrDpi: 400
+    OcrMinConfidence: 30
+    TesseractExe: "C:/Program Files/Tesseract-OCR/tesseract.exe"
+
+# Where DSRFQ stores uploaded files (its UploadSettings:Path). The drawing
+# conversion template's artwork is uploaded through the app, so the consumer
+# reads it from the app's upload folder rather than keeping its own copy in
+# source/.
+UploadRoot: "C:/Aizera/DSRFQ/DSRFQ.Web/App_Data/upload"
+
+# How many parts may be in flight at once, and the housekeeping around that.
+#
+# Before this existed, nothing throttled the pipeline: every handler hands its
+# work to a thread and returns, so the consumer acked and took the next message
+# immediately. Ten drawings uploaded together started ten conversions at once
+# and the box ran out of memory. Work now waits in dbo.CostingPartQueue and the
+# dispatcher starts it a slot at a time; the Processing Queue page in DSRFQ
+# reads those same rows.
+Queue:
+  # Per lane, because the three kinds of work load different machines: drawing
+  # conversion hammers the local Paddle services (3500/3600/3501), costing
+  # talks to tsh_new on 8888, ballooning to the Bubble engine on 5998. One
+  # global limit would idle two of them to protect the third.
+  #
+  # 1 is "strictly one at a time", which is what this 15 GB box wants for
+  # drawing. Raise it once Processing.Mode can safely be parallel.
+  Lanes:
+    drawing: 1
+    costing: 1
+    ballooning: 1
+    # Reading a parts list off a 2D drawing is one Ollama vision call, ~20s.
+    # Its own lane so that cost sits beside the next part's conversion rather
+    # than inside the drawing lane, which would roughly double a drawing run.
+    bom: 1
+
+  # How often the dispatcher looks for a free slot or a finished job. This is
+  # also the worst-case idle gap between one part finishing and the next
+  # starting, so keep it small.
+  PollSeconds: 3
+
+  # A job is finished when its part's status columns leave Pending/In Progress.
+  # A handler that dies between its threads never writes those, so the part
+  # would sit In Progress forever and -- at a lane limit of 1 -- stop the
+  # pipeline for good. After this long the job is failed and the slot released.
+  #
+  # Set these above the slowest run you expect: costing polls /gongyi_tsh for
+  # up to GongyiMaxPolls * GongyiPollSeconds (10 minutes) on top of everything
+  # before it.
+  StaleMinutes:
+    drawing: 30
+    costing: 45
+    ballooning: 20
+    bom: 15
+
+  # Finished rows are the page's history. They are soft-deleted after this long.
+  HistoryDays: 14
+
+Queues:
+  NewCostingParts:
+    api_url: "http://localhost:3500/process-document/"
+    handler: "new_costing_part_created"
+
+  RetryOcr:
+    api_url: "http://localhost:3500/process-document/"
+    handler: "new_costing_part_created"
+
+  Costing:
+    api_url: ""
+    handler: "costing"
+
+  CostingFileUpload:
+    api_url: ""
+    handler: "costing_file_upload"
+
+  CostingFileUploadData:
+    api_url:  ""
+    handler: "costing_file_upload_data"
+
+  CostingSuanfei:
+    api_url:  ""
+    handler: "costing_suanfei"
+
+  CostingGongyi:
+    api_url:  ""
+    handler: "costing_gongyi"
+
+  Ballooning:
+    api_url: "http://localhost:8000/api/v1/process/ballooning/upload"
+    handler: "ballooning_requested"
+
+  # Reads a 2D drawing's parts list with a vision model. Gated by the queue's
+  # 'bom' lane so it never blocks a drawing run.
+  BomOcr:
+    api_url: ""
+    handler: "bom_ocr_requested"
+
+
+
+DSRFQ:
+  # The running application. Was 192.168.2.100:5001, which is unreachable from
+  # this box - the consumer could not fetch a file or a token from it. Keep this
+  # in step with the Database block above; both must describe one instance.
+  # 5001, not 5000: DSEFACTORY (DS_ERP.Web) occupies 5000 on this box, and
+  # because both are Serenity apps a probe of /Account/Login answers 200 from
+  # either. Pointing here at 5000 silently fetched files from the wrong app.
+  Url: "http://localhost:5001"
+  Username: "admin"
+  Password: "serenity"
+  TshUrl: "https://tshgroup-portal.net"
+  TshUsername: "admin"
+  TshPassword: "Tsh9989"
+
+# X-API-Key expected by RPA\API (its ERP_API_KEY). Override per environment.
+BallooningApiKey: "1231"
+
+WeightUnit: "kg"
+CurrencyCode: "USD"
+VolumeUnit: "mm3"
+SurfaceAreaUnit: "mm"
+Url:
+  NewCostingParts: "http://localhost:3500/process-document/"
+  NewCostingPartsV2: "http://localhost:3600/process-document/"
+  NewCostingPartFast: "http://localhost:3501/process-drawing/"
+  # RPA\API middleware, which fronts the Bubble recognition engine.
+  Ballooning: "http://localhost:8000/api/v1/process/ballooning/upload"
+  CostingFileUpload: "http://localhost:8888/file_upload_local_tsh"
+  CostingFileUploadData: "http://localhost:8888/file_data_tsh"
+  CostingSuanfei: "http://localhost:8888/suanfei_tsh"
+  CostingGongyi: "http://localhost:8888/gongyi_tsh"

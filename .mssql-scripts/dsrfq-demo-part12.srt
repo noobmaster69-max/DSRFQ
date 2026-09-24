@@ -1,0 +1,58 @@
+1
+00:00:00,600 --> 00:00:05,204
+D S R F Q — automated quoting for machined parts.
+
+2
+00:00:04,850 --> 00:00:13,883
+A customer sends a drawing and a 3D model. Traditionally an
+estimator reads it and prices it by hand — hours per part.
+
+3
+00:00:15,210 --> 00:00:22,523
+Here the work is already done: conversion, title block reading,
+costing and ballooning.
+
+4
+00:00:23,970 --> 00:00:28,229
+The geometry is measured straight from the STEP file.
+
+5
+00:00:28,030 --> 00:00:34,949
+Then priced: setup, roughing, finishing. Twelve fifty.
+
+6
+00:00:34,730 --> 00:00:40,334
+It reads the parts list off the drawing — nine items, with part
+numbers.
+
+7
+00:00:41,530 --> 00:00:48,478
+And the special processes: cleaning and silver plating, each
+with its specification.
+
+8
+00:00:48,790 --> 00:00:58,183
+This is the customer's original sheet. Their title block is
+covered here, because replacing it is what the next step does.
+
+9
+00:00:59,690 --> 00:01:08,413
+The converted drawing. Same geometry, our title block, notes
+rewritten to our specifications.
+
+10
+00:01:08,190 --> 00:01:21,978
+It also balloons the drawing for inspection. A hundred and
+seventy-two balloons across five pages, each tied to a dimension
+and its tolerance — the mark-up a quality team would otherwise
+
+11
+00:01:25,270 --> 00:01:34,513
+Every file stays searchable by what is inside it — part number,
+material, customer, all read from the drawing itself.
+
+12
+00:01:38,140 --> 00:01:47,804
+And across the system: how long each stage takes, and what
+failed. Two files in, a costed quote out.
+

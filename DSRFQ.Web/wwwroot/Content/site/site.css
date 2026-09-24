@@ -1,5 +1,26 @@
+/* ASME Y14.5M-2009 geometric dimensioning and tolerancing face.
+   Drawing symbols (flatness, perpendicularity, position, datum references and
+   so on) live in this font's glyph range; without it a symbol such as the
+   position marker falls back to a system font and renders as a box or an
+   unrelated character. Ballooning shows raw drawing text, so the symbols only
+   read correctly with this face applied. */
+@font-face {
+  font-family: 'Y14_5M';
+  src: url('./Y145m2009-127e.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  /* Keep text readable while the face loads rather than blanking it. */
+  font-display: swap;
+}
+
+/* Logo deliberately blank (a transparent image keeps the sidebar and login
+   layout as they were). The original is Serenity.Assets/logo/white-128.png. */
 .s-site-logo-img {
-  content: url(../../Serenity.Assets/logo/white-128.png);
+  content: url(blank-logo.png);
+  /* Serenity paints a coloured disc behind the logo; blank means no disc. */
+  background: transparent !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
 }
 #OrganizationDetail{
   width:100%;
@@ -276,4 +297,262 @@
   width:100%;
   height:500px;
   overflow-y: auto;
+}
+
+/* Re-run buttons in the costing parts grid.
+ *
+ * Built only from --bs-body-bg / --bs-body-color / --bs-border-color, which are
+ * the three variables every app theme here redefines (azure-light, glassy-light
+ * and cosmos-dark). Anything else - a hard-coded grey, or a --bs-* that only one
+ * theme sets - reads fine in the theme it was written in and turns unreadable in
+ * the others. The one exception is the four state colours, which fall back to
+ * literals so a theme that drops --bs-success still shows a green "done". */
+.cp-rerun-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  height: 100%;
+  padding: 6px 0;
+
+  --cp-surface: color-mix(in srgb, var(--bs-body-color) 4%, var(--bs-body-bg));
+  --cp-surface-hover: color-mix(in srgb, var(--bs-body-color) 12%, var(--bs-body-bg));
+  --cp-muted: color-mix(in srgb, var(--bs-body-color) 55%, var(--bs-body-bg));
+}
+
+/* ── Costing parts, as cards ─────────────────────────────────────────────
+ * One card per grid row. Colours go through the same --bs-body-color /
+ * --bs-body-bg color-mix as the re-run buttons above, because this app ships
+ * three themes and a hard-coded grey reads fine in exactly one of them. */
+/* CardViewMixin wraps each card in .card inside a Bootstrap column and gives
+ * that wrapper the grid's row height with overflow:auto - which clips a card
+ * built for more than one row's worth of content. Sized here rather than with
+ * the MutationObserver DS_ERP uses for the same problem: this is a layout
+ * decision, and CSS applies it before first paint instead of after.
+ *
+ * :has() keeps it to THIS card view - a later grid adopting CardViewMixin
+ * should not inherit a height chosen for costing parts. */
+/* 268, not 238: measured against the widest case - two document pills, a
+ * wrapped description and a progress message. At 238 the content needed 239
+ * and the actions row was cut off. */
+.card-items .card:has(.cp-card) {
+  height: 268px;
+  overflow: visible;
+}
+.card-items .card:has(.cp-card) > * { height: 100%; }
+
+.cp-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+  --cp-surface: color-mix(in srgb, var(--bs-body-color) 4%, var(--bs-body-bg));
+  --cp-muted: color-mix(in srgb, var(--bs-body-color) 55%, var(--bs-body-bg));
+  --cp-line: color-mix(in srgb, var(--bs-body-color) 14%, var(--bs-body-bg));
+}
+
+/* Picture and identity share the top band: the thumbnail is what the eye
+ * lands on first and the part number is what confirms it. */
+.cp-card-top { display: flex; gap: 12px; align-items: flex-start; }
+
+.cp-card-thumb {
+  flex: 0 0 76px;
+  height: 76px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--cp-line);
+  border-radius: 6px;
+  background: var(--cp-surface);
+  overflow: hidden;
+}
+.cp-card-thumb img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.cp-card-nothumb { font-size: 26px; color: var(--cp-muted); }
+
+.cp-card-id { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+
+.cp-card-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.cp-part { font-size: 15px; font-weight: 700; letter-spacing: .01em; }
+.cp-rev, .cp-id {
+  font-size: 11px; padding: 1px 6px; border-radius: 10px;
+  background: var(--cp-surface); color: var(--cp-muted);
+  border: 1px solid var(--cp-line);
+}
+.cp-desc {
+  font-size: 12.5px; color: var(--cp-muted);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* The four stages sit together so they can be compared in one glance - that
+ * is the whole reason for the card. Spread across four columns they could not
+ * be seen at the same time without scrolling sideways. */
+.cp-chips { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.cp-chip { display: inline-flex; align-items: baseline; gap: 5px; font-size: 11.5px; }
+.cp-chip b { font-size: 9px; line-height: 1; }
+.cp-chip-label { color: var(--cp-muted); }
+.cp-chip-value { font-weight: 600; }
+
+.cp-docs { display: flex; flex-wrap: wrap; gap: 6px; }
+.cp-doc {
+  display: inline-flex; align-items: center; gap: 6px;
+  max-width: 260px;
+  padding: 2px 8px 2px 2px;
+  border: 1px solid var(--cp-line); border-radius: 12px;
+  background: var(--cp-surface);
+  font-size: 11px; text-decoration: none; color: var(--bs-body-color);
+}
+.cp-doc:hover { border-color: var(--bs-primary, #2563eb); }
+.cp-doc-type {
+  min-width: 26px; padding: 1px 5px; border-radius: 10px;
+  color: #fff; font-weight: 700; font-size: 10px; text-align: center;
+}
+.cp-doc-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.cp-msg {
+  font-size: 11.5px; color: var(--cp-muted);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* Actions pin to the bottom so every card in a row lines them up, however
+ * much description or how many documents the one above them carries. */
+.cp-card-actions {
+  margin-top: auto;
+  display: flex; align-items: center; gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--cp-line);
+}
+.cp-card-actions .open-workspace-button { flex: 0 0 auto; }
+.cp-card-actions .delete-button {
+  margin-left: auto; cursor: pointer;
+  color: var(--bs-danger, #dc2626); font-size: 13px; padding: 2px 6px;
+}
+/* Horizontal inside a card: three stacked buttons would take a third of its
+ * height for controls that are used once in a while. */
+.cp-card .cp-rerun-group {
+  flex-direction: row; height: auto; padding: 0; gap: 4px; flex: 1 1 auto;
+}
+.cp-card .cp-rerun-group .cp-rerun { width: auto; flex: 1 1 0; }
+.cp-card .cp-rerun-go { display: none; }
+
+/* Three of these have to fit inside the grid row, so the metrics are
+ * fixed rather than inherited - a theme that ships a roomier default button
+ * would otherwise push the last one out of sight. */
+.cp-rerun-group .cp-rerun {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  height: 26px;
+  padding: 0 7px;
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 26px;
+  text-align: left;
+  white-space: nowrap;
+  border-radius: 4px;
+  border: 1px solid var(--bs-border-color);
+  /* The state colour lives on the left edge only. A full tinted button for
+   * every stage would put three competing colours in a 150px column and drown
+   * the one thing the eye is looking for, which is the failure. */
+  border-left: 3px solid var(--cp-state, var(--bs-border-color));
+  background: var(--cp-surface);
+  color: var(--bs-body-color);
+  transition: background-color .12s ease, border-color .12s ease;
+}
+
+.cp-rerun-group .cp-rerun-icon {
+  width: 12px;
+  flex: 0 0 auto;
+  text-align: center;
+  color: var(--cp-state, inherit);
+  opacity: .85;
+}
+
+/* Takes the slack so the run affordance sits hard against the right edge. */
+.cp-rerun-group .cp-rerun-label {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Space is reserved even while hidden, so nothing shifts on hover. */
+.cp-rerun-group .cp-rerun-go {
+  flex: 0 0 auto;
+  width: 11px;
+  font-size: 10px;
+  text-align: center;
+  color: var(--cp-muted);
+  opacity: 0;
+  transition: opacity .12s ease;
+}
+
+.cp-rerun-group .cp-rerun:hover:not(:disabled) {
+  background: var(--cp-surface-hover);
+  border-color: color-mix(in srgb, var(--bs-body-color) 35%, var(--bs-body-bg));
+  border-left-color: var(--cp-state, var(--bs-border-color));
+}
+
+.cp-rerun-group .cp-rerun:hover:not(:disabled) .cp-rerun-go { opacity: 1; }
+
+.cp-rerun-group .cp-rerun:focus-visible {
+  outline: 2px solid var(--bs-primary, #0d6efd);
+  outline-offset: 1px;
+}
+
+/* Idle keeps the neutral border: nothing has happened worth flagging. */
+.cp-rerun-group .cp-rerun-done   { --cp-state: var(--bs-success, #198754); }
+.cp-rerun-group .cp-rerun-failed { --cp-state: var(--bs-danger, #dc3545); }
+.cp-rerun-group .cp-rerun-running { --cp-state: var(--bs-primary, #0d6efd); }
+
+/* A failed stage is the one the operator came here to re-run, so it is the
+ * only state that tints the whole button rather than just its edge. */
+.cp-rerun-group .cp-rerun-failed:not(:disabled) {
+  background: color-mix(in srgb, var(--bs-danger, #dc3545) 9%, var(--cp-surface));
+}
+
+.cp-rerun-group .cp-rerun-failed:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--bs-danger, #dc3545) 18%, var(--cp-surface));
+}
+
+.cp-rerun-group .cp-rerun:disabled {
+  /* Mixed toward the row background, not toward `transparent`: a translucent
+   * label over a striped grid row lands at a different contrast on every other
+   * row, and on the striped one it fails. */
+  color: var(--cp-muted);
+  cursor: not-allowed;
+}
+
+/* Running is the one disabled state that is not a dead end - the spinner says
+ * "come back", where the dashed border used to say "broken". */
+.cp-rerun-group .cp-rerun-running:disabled {
+  border-style: solid;
+  background: color-mix(in srgb, var(--bs-primary, #0d6efd) 8%, var(--cp-surface));
+}
+
+.cp-rerun-group .cp-rerun-running:disabled .cp-rerun-icon {
+  opacity: 1;
+}
+
+/* Own keyframes rather than .fa-spin: the icon font is swapped per theme here
+ * and line-awesome does not always carry the animation with it. */
+.cp-rerun-group .cp-rerun-spin { animation: cp-rerun-spin 1.1s linear infinite; }
+
+@keyframes cp-rerun-spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .cp-rerun-group .cp-rerun-spin { animation-duration: 3s; }
+  .cp-rerun-group .cp-rerun,
+  .cp-rerun-group .cp-rerun-go { transition: none; }
+}
+
+/* Thumbnails rendered by InlineImageFormatter. The cell is a fixed-height
+ * grid row, so the image is sized off the row rather than its own pixels;
+ * object-fit keeps the aspect ratio while it fills that box. */
+.inline-image-formatter {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  object-fit: cover;
+  cursor: pointer;
+  vertical-align: middle;
 }

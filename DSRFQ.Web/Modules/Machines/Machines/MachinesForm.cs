@@ -7,6 +7,7 @@ namespace DSRFQ.Machines.Forms;
 [BasedOnRow(typeof(MachinesRow), CheckNames = true)]
 public class MachinesForm
 {
+    public string Picture {get;set;}
     public string Name { get; set; }
     [HalfWidth(UntilNext = true)]
     public string Description { get; set; }

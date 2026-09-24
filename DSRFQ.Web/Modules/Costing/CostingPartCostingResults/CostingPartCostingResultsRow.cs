@@ -17,6 +17,7 @@ public sealed class CostingPartCostingResultsRow : LoggingRow<CostingPartCosting
     const string jCostingPart = nameof(jCostingPart);
     const string jDimensionUnit = nameof(jDimensionUnit);
     const string jCurrency = nameof(jCurrency);
+    const string jMachine = nameof(jMachine);
 
     [DisplayName("Id"), Column("ID"), Identity, IdProperty]
     public int? Id { get => fields.Id[this]; set => fields.Id[this] = value; }
@@ -60,7 +61,80 @@ public sealed class CostingPartCostingResultsRow : LoggingRow<CostingPartCosting
     [DisplayName("Is Manual"), NotNull,BooleanEditor]
     public bool? IsManual { get => fields.IsManual[this]; set => fields.IsManual[this] = value; }
 
-   
+    // ---- The machine that set this line's rate -----------------------------
+    //
+    // Per line, not per part: a turn-mill part prices its milling rows and its
+    // Turning row on two different machines. Null on rows that are not machine
+    // time (material, special process).
+    // See DefaultDB_20260821_1200_CostingResultMachine.
+    //
+    // MachineID is new_tsh's fa_supplier_equipment.id, and that table and
+    // dbo.Machines are the same catalogue under the same ids -- all 38
+    // equipment rows match a Machines row on both id and name, and
+    // trg_AfterChange_Machines keeps them in step. So it does join, and the
+    // details below come straight from dbo.Machines rather than having to be
+    // copied across the database boundary.
+    //
+    // MachineName stays denormalised regardless: it is what the quote was
+    // priced on at the time, it carries new_tsh's own wording for the
+    // no-match case ("Default rates (no matching machine)"), and renaming a
+    // machine later must not rewrite history on a quote already sent out.
+
+    [DisplayName("Machine"), Size(200)]
+    public string MachineName { get => fields.MachineName[this]; set => fields.MachineName[this] = value; }
+
+    // typeof(MachinesRow), not the ("Machines", "ID") string form: [Origin]
+    // resolves the joined property through the target row's type, and with the
+    // string form Serenity refuses to start -- "[ForeignKey] and [LeftJoin] on
+    // related join property 'MachineId' doesn't use a typeof(SomeRow)".
+    [DisplayName("Machine Id"), Column("MachineID")]
+    [ForeignKey(typeof(Machines.MachinesRow)), LeftJoin(jMachine)]
+    public int? MachineId { get => fields.MachineId[this]; set => fields.MachineId[this] = value; }
+
+    // Everything the workspace needs to show the machine it was costed on.
+    // Joined rather than copied: unlike MachineName these are specifications,
+    // not a record of the quote, so the current value is the right one.
+
+    /// <summary>
+    /// The machine's own name, e.g. "MAKINO A61NX-5XR".
+    /// </summary>
+    /// <remarks>
+    /// Distinct from MachineName, which is new_tsh's composite label -- it
+    /// packs the axis count and the work envelope into the same string
+    /// ("MAKINO A61NX-5XR 3-axis 720x650x800"). That is unreadable in a table
+    /// cell and duplicates values shown as their own fields, so the UI shows
+    /// this and lists the specifications separately.
+    /// </remarks>
+    [DisplayName("Machine Name"), Origin(jMachine, nameof(Machines.MachinesRow.Name))]
+    public string MachineRealName { get => fields.MachineRealName[this]; set => fields.MachineRealName[this] = value; }
+
+    [DisplayName("Machine Picture"), Origin(jMachine, nameof(Machines.MachinesRow.Picture))]
+    public string MachinePicture { get => fields.MachinePicture[this]; set => fields.MachinePicture[this] = value; }
+
+    [DisplayName("Machine Axes"), Origin(jMachine, nameof(Machines.MachinesRow.AxisNumber))]
+    public int? MachineAxisNumber { get => fields.MachineAxisNumber[this]; set => fields.MachineAxisNumber[this] = value; }
+
+    [DisplayName("Machine Precision"), Origin(jMachine, nameof(Machines.MachinesRow.Precision))]
+    public decimal? MachinePrecision { get => fields.MachinePrecision[this]; set => fields.MachinePrecision[this] = value; }
+
+    /// <summary>Hourly rate on the machine record, for comparison with UnitPrice.</summary>
+    [DisplayName("Machine Rate"), Origin(jMachine, nameof(Machines.MachinesRow.Cost))]
+    public decimal? MachineCost { get => fields.MachineCost[this]; set => fields.MachineCost[this] = value; }
+
+    [DisplayName("Machine Envelope X"), Origin(jMachine, nameof(Machines.MachinesRow.WorkEnvelopeX))]
+    public decimal? MachineWorkEnvelopeX { get => fields.MachineWorkEnvelopeX[this]; set => fields.MachineWorkEnvelopeX[this] = value; }
+
+    [DisplayName("Machine Envelope Y"), Origin(jMachine, nameof(Machines.MachinesRow.WorkEnvelopeY))]
+    public decimal? MachineWorkEnvelopeY { get => fields.MachineWorkEnvelopeY[this]; set => fields.MachineWorkEnvelopeY[this] = value; }
+
+    [DisplayName("Machine Envelope Z"), Origin(jMachine, nameof(Machines.MachinesRow.WorkEnvelopeZ))]
+    public decimal? MachineWorkEnvelopeZ { get => fields.MachineWorkEnvelopeZ[this]; set => fields.MachineWorkEnvelopeZ[this] = value; }
+
+    [DisplayName("Machine Weight Limit"), Origin(jMachine, nameof(Machines.MachinesRow.WeightLimit))]
+    public decimal? MachineWeightLimit { get => fields.MachineWeightLimit[this]; set => fields.MachineWeightLimit[this] = value; }
+
+    [DisplayName("Machine Description"), Origin(jMachine, nameof(Machines.MachinesRow.Description))]
+    public string MachineDescription { get => fields.MachineDescription[this]; set => fields.MachineDescription[this] = value; }
 
     [DisplayName("Costing Part Part Number"), Origin(jCostingPart, nameof(CostingPartsRow.PartNumber))]
     public string CostingPartPartNumber { get => fields.CostingPartPartNumber[this]; set => fields.CostingPartPartNumber[this] = value; }
@@ -73,6 +147,18 @@ public sealed class CostingPartCostingResultsRow : LoggingRow<CostingPartCosting
 
     public class RowFields : LoggingRowFields
     {
+        public StringField MachineName;
+        public Int32Field MachineId;
+        public StringField MachineRealName;
+        public StringField MachinePicture;
+        public Int32Field MachineAxisNumber;
+        public DecimalField MachinePrecision;
+        public DecimalField MachineCost;
+        public DecimalField MachineWorkEnvelopeX;
+        public DecimalField MachineWorkEnvelopeY;
+        public DecimalField MachineWorkEnvelopeZ;
+        public DecimalField MachineWeightLimit;
+        public StringField MachineDescription;
         public Int32Field Id;
         public Int32Field CostingPartId;
         public Int32Field CostingCategoryId;

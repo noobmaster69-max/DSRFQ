@@ -3,15 +3,6 @@
 @{
     ViewData["Title"] = "Dashboard";
     ViewData["PageId"] = "Dashboard";
-#if (Northwind)
-    string nwLinkFormat = "~/Northwind/{0}";
-#else  
-    string nwLinkFormat = "javascript:;";
-#endif
-}
-
-@section Head {
-@Html.StyleBundle("Pages/Dashboard")
 }
 
 @section ContentHeader {
@@ -23,6 +14,5 @@
 
 @Html.ModulePageInit(ESM.DashboardPage, new
 {
-    model = Model,
-    nwLinkFormat
+    model = Model
 })

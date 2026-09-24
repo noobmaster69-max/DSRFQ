@@ -1,0 +1,12 @@
+@model int
+@{
+    ViewData["Title"] = "Costing Workspace";
+    ViewData["PageId"] = "CostingWorkspace";
+}
+
+<div id="CostingWorkspace"></div>
+
+@Html.ModulePageInit("~/esm/Modules/Costing/Workspace/CostingWorkspacePage.js", new
+{
+    costingPartId = Model
+})
